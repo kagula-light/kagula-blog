@@ -37,6 +37,8 @@
 | CI/CD | `docs/deployment.md`、`docs/operations.md` |
 | 测试或验收 | `docs/testing.md` |
 
+阶段 1 实施必须追加阅读 `docs/superpowers/plans/2026-07-10-phase-1-engineering-foundation.md`。
+
 ## 事实优先级
 
 发生冲突时按以下顺序判断：
