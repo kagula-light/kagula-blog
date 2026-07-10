@@ -17,6 +17,9 @@ blob-report/
 .env.*.local
 .env.production
 .env.test
+.env.development
+.env.production.local
+*.local
 !.env.example
 !.env.*.example
 
@@ -36,4 +39,5 @@ Thumbs.db
 .turbo/
 .pnpm-store/
 *.tsbuildinfo
+.minio/
 .worktrees/

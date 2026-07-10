@@ -1,0 +1,39 @@
+{
+  "name": "kagura-blog",
+  "private": true,
+  "packageManager": "pnpm@11.11.0",
+  "engines": {
+    "node": ">=22.13 <23"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel --stream --if-present dev",
+    "build": "pnpm -r --workspace-concurrency=1 --if-present build",
+    "lint": "eslint .",
+    "typecheck": "pnpm -r --workspace-concurrency=1 --if-present typecheck",
+    "test": "pnpm -r --workspace-concurrency=1 --if-present test",
+    "test:integration": "pnpm -r --workspace-concurrency=1 --if-present test:integration",
+    "test:e2e": "pnpm --filter @kagura/web test:e2e",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "infra:up": "docker compose -p kagura-blog-dev -f infra/docker/compose.dev.yml up -d",
+    "infra:down": "docker compose -p kagura-blog-dev -f infra/docker/compose.dev.yml down",
+    "containers:smoke": "docker compose -p kagura-blog-smoke -f infra/docker/compose.smoke.yml up --build --abort-on-container-failure --exit-code-from smoke"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1",
+    "@tailwindcss/postcss": "4.3.2",
+    "@types/node": "22.20.1",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@vitest/coverage-v8": "4.1.10",
+    "dotenv": "17.4.2",
+    "eslint": "10.6.0",
+    "eslint-config-next": "16.2.10",
+    "prettier": "3.9.5",
+    "tailwindcss": "4.3.2",
+    "tsx": "4.23.0",
+    "tsup": "8.5.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.10"
+  }
+}
