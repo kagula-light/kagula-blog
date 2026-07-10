@@ -36,3 +36,4 @@ Thumbs.db
 .turbo/
 .pnpm-store/
 *.tsbuildinfo
+.worktrees/
