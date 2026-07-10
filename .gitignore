@@ -1,0 +1,38 @@
+# Dependencies and build output
+node_modules/
+.next/
+dist/
+build/
+coverage/
+
+# Test and browser artifacts
+playwright-report/
+test-results/
+blob-report/
+*.trace.zip
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+.env.production
+.env.test
+!.env.example
+!.env.*.example
+
+# Logs and runtime data
+*.log
+logs/
+tmp/
+data/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local tooling
+.turbo/
+.pnpm-store/
+*.tsbuildinfo
