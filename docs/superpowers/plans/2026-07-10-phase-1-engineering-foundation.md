@@ -41,7 +41,7 @@ These versions were checked against npm on 2026-07-10. Use exact versions and co
 | `zod` | `4.4.3` |
 | `vitest`, `@vitest/coverage-v8` | `4.1.10` |
 | `@playwright/test` | `1.61.1` |
-| `eslint` | `10.6.0` |
+| `eslint` | `9.39.4` |
 | `prettier` | `3.9.5` |
 | `tsx` | `4.23.0` |
 | `tsup` | `8.5.1` |
@@ -203,7 +203,7 @@ Create the root `package.json` with `private: true`, `packageManager: "pnpm@11.1
     "@types/react-dom": "19.2.3",
     "@vitest/coverage-v8": "4.1.10",
     "dotenv": "17.4.2",
-    "eslint": "10.6.0",
+    "eslint": "9.39.4",
     "eslint-config-next": "16.2.10",
     "prettier": "3.9.5",
     "tailwindcss": "4.3.2",
