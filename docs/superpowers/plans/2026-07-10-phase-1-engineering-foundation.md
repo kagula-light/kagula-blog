@@ -231,7 +231,7 @@ syncInjectedDepsAfterScripts:
 
 - [ ] **Step 3: Add formatting and Docker context rules**
 
-Create `prettier.config.mjs` with `semi: true`, `singleQuote: false`, `trailingComma: "all"`, and `printWidth: 100`. Ignore `.next`, coverage, Playwright output, build output, migrations, and generated lockfile formatting. Make `.dockerignore` exclude Git data, local env files, local volumes, test reports, and build caches while retaining `.env.example` files.
+Create `prettier.config.mjs` with `semi: true`, `singleQuote: false`, `trailingComma: "all"`, and `printWidth: 100`. Ignore `.next`, coverage, Playwright output, build output, migrations, generated lockfile formatting, and the approved long-form Markdown documents (`README.md`, `AGENTS.md`, `PRODUCT.md`, `DESIGN.md`, and `docs/`). Keep source and configuration files covered by `format:check`. Make `.dockerignore` exclude Git data, local env files, local volumes, test reports, and build caches while retaining `.env.example` files.
 
 - [ ] **Step 4: Extend secret and generated-file ignores**
 

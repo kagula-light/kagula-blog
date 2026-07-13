@@ -20,3 +20,10 @@ logs/
 tmp/
 data/
 *.log
+
+# Approved long-form project documentation is maintained outside Prettier's source checks.
+README.md
+AGENTS.md
+PRODUCT.md
+DESIGN.md
+docs/
