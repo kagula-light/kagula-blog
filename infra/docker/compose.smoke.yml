@@ -30,7 +30,7 @@ services:
     command: ["node", "dist/migrate.js"]
     environment: &runtime-env
       NODE_ENV: production
-      APP_URL: http://web:3000
+      APP_URL: https://smoke.invalid
       APP_TIMEZONE: Asia/Shanghai
       APP_RELEASE: smoke
       LOG_LEVEL: info
