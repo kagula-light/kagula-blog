@@ -10,6 +10,12 @@
 - Docker Desktop 或兼容 Docker Engine。
 - 可运行 Chromium 的 Playwright 环境。
 
+## 环境真值
+
+用户已明确要求运行状态以目标服务器为准。本机不得启动 PostgreSQL、Redis、Web、Worker 或 Docker 服务替代服务器验证；本机只执行代码编辑、格式、Lint、类型检查等不依赖运行服务的检查。
+
+服务器验证必须使用独立的 `kagura-blog-*` Compose 项目、网络、容器和卷，不得复用或修改现有 `sub2api`、PostgreSQL、Redis、宝塔或全局 Nginx。源码构建仍在 CI 完成，目标服务器只拉取和运行构建产物。
+
 Node 和 pnpm 版本在脚手架提交中固定，不依赖开发者机器的隐式版本。
 
 ## 当前启动流程
@@ -22,7 +28,9 @@ pnpm --filter @kagura/database db:migrate
 pnpm dev
 ~~~
 
-注意：`infra/docker/compose.dev.yml` 仍因 Docker Hub manifest 校验超时而未创建，`pnpm infra:up` 当前不可用。不要连接或复用机器上其他项目的 PostgreSQL/Redis。
+`infra/docker/compose.dev.yml` 使用固定项目名 `kagura-blog-dev`，服务端口仅绑定回环地址：PostgreSQL `55432`、Redis `56379`、MinIO API `59000`、MinIO Console `59001`。不要连接或复用机器上其他项目的 PostgreSQL/Redis。
+
+`pnpm infra:up` 和 `pnpm infra:down` 只管理该独立项目。开发卷 `kagura-blog-dev-postgres`、`kagura-blog-dev-redis`、`kagura-blog-dev-minio` 是可丢弃的本地/验证数据，不得在生产环境复用。
 
 本地开发使用：
 

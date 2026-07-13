@@ -21,7 +21,7 @@
 
 ## 阶段 1：仓库与工程基础
 
-状态：核心工程已实现，容器执行验收受 Docker Hub 网络阻断，尚未完全退出阶段 1。
+状态：核心工程与服务器隔离开发基础设施已实现，生产形态镜像 smoke 与 CI 首次远端运行仍待完成。
 
 目标：建立可重复构建、可测试的 pnpm workspace。
 
@@ -35,7 +35,9 @@
 
 已完成：workspace、Web/Worker 健康服务、环境校验、基线迁移、单元/集成测试基础、Playwright、生产形态镜像声明和两级 CI 门禁。
 
-待完成：精确镜像 manifest 校验、隔离开发 Compose、本机容器 smoke 与依赖停止/恢复验证；CI 首次远端运行结果也需确认。2026-07-13 本机执行 `pnpm containers:smoke` 在镜像获取阶段 90 秒无进展后超时，未创建任何 smoke 容器，已清理 Compose 项目。
+2026-07-13 已在目标服务器验证 PostgreSQL 17、Redis 7.4、MinIO 与 MinIO Client 精确标签，`kagura-blog-dev` 独立 Compose 的三个长期服务均健康，MinIO 初始化幂等且创建 `kagura-assets`。现有 `sub2api` 及其数据库、Redis 未被修改。
+
+待完成：生产形态容器 smoke、依赖停止/恢复验证和 CI 首次远端运行结果。用户已要求不再启动本机服务，后续运行验收以服务器状态为准。
 
 退出条件：
 
