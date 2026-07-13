@@ -21,7 +21,7 @@ describe("database migrations", () => {
     await client?.end({ timeout: 5 });
   });
 
-  it("records one baseline migration and remains idempotent", async () => {
+  it("records every migration once and remains idempotent", async () => {
     if (!client) {
       throw new Error("database client was not initialized");
     }
@@ -32,7 +32,7 @@ describe("database migrations", () => {
       order by created_at
     `;
 
-    expect(rows).toHaveLength(1);
-    expect(rows[0]?.hash).toEqual(expect.any(String));
+    expect(rows).toHaveLength(2);
+    expect(rows.every((row) => typeof row.hash === "string" && row.hash.length > 0)).toBe(true);
   });
 });
