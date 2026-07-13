@@ -1,0 +1,27 @@
+{
+  "name": "@kagura/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./env": {
+      "types": "./src/env.ts",
+      "default": "./src/env.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/env.ts --format esm --dts --out-dir dist",
+    "dev": "tsup src/env.ts --format esm --watch --out-dir dist",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.1",
+    "tsup": "8.5.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.10"
+  }
+}
