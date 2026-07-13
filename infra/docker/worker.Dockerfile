@@ -4,11 +4,12 @@ RUN corepack enable && corepack prepare pnpm@11.11.0 --activate
 COPY . .
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @kagura/worker build
+RUN pnpm --filter @kagura/worker deploy --prod /prod/worker
 
 FROM node:22.23.1-alpine AS runtime
 ENV NODE_ENV=production WORKER_HEALTH_PORT=3001
 WORKDIR /app
-COPY --from=build --chown=node:node /workspace/apps/worker/dist/ ./dist/
+COPY --from=build --chown=node:node /prod/worker/ ./
 COPY --from=build --chown=node:node /workspace/packages/database/drizzle/ ./drizzle/
 USER node
 EXPOSE 3001
