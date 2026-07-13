@@ -34,5 +34,13 @@ export function createHealthResponse(input: HealthResponseInput): HealthResponse
     return response;
   }
 
-  return { ...response, checks: input.checks };
+  const checks: Record<string, HealthCheck> = {};
+  for (const [name, check] of Object.entries(input.checks)) {
+    checks[name] = {
+      status: check.status,
+      durationMs: check.durationMs,
+    };
+  }
+
+  return { ...response, checks };
 }
