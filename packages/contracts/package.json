@@ -1,0 +1,24 @@
+{
+  "name": "@kagura/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./health": {
+      "types": "./src/health.ts",
+      "default": "./src/health.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/health.ts --format esm --dts --out-dir dist",
+    "dev": "tsup src/health.ts --format esm --watch --out-dir dist",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.1",
+    "tsup": "8.5.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.10"
+  }
+}
