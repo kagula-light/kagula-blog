@@ -31,6 +31,8 @@ blog Compose project
 
 阶段 1 建立 CI、迁移验证和镜像构建冒烟测试，不注入任何生产部署凭据。以下“合并 main”生产步骤只在阶段 6 的 Compose、备份、迁移、健康检查、回滚和受限部署用户全部验证后启用。
 
+当前 `.github/workflows/ci.yml` 只有 `quality` 和依赖它的 `container-smoke` 两个任务，权限仅为 `contents: read`。它不会连接服务器、推送镜像或读取部署 Secret。
+
 ### Pull Request
 
 1. 安装锁定依赖。
@@ -40,7 +42,7 @@ blog Compose project
 5. 启动临时 PostgreSQL 和 Redis，执行迁移与集成测试。
 6. 构建 Web 和 Worker。
 7. 构建容器镜像并运行健康冒烟检查。
-8. 必要时运行核心 Playwright 流程。
+8. 运行 Chromium 工程基础冒烟流程。
 
 ### 合并 main，阶段 6 启用
 

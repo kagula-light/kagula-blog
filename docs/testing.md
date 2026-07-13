@@ -9,7 +9,7 @@
 - 第三方热点使用固定样本，不让 CI 依赖外部网络。
 - 任何“已完成”声明必须附实际命令与结果。
 
-## 计划命令
+## 当前命令
 
 ~~~bash
 pnpm lint
@@ -20,7 +20,7 @@ pnpm test:e2e
 pnpm build
 ~~~
 
-脚手架完成后以 `package.json` 为准。
+上述命令由根目录 `package.json` 提供。`pnpm test:e2e` 会启动 Web standalone 构建，因此必须先运行 `pnpm build`。
 
 ## 单元测试
 
@@ -135,6 +135,15 @@ Pull Request 必须通过：
 - 单元测试。
 - 迁移与集成测试。
 - Web 与 Worker 构建。
+- Chromium 冒烟测试。
+- 生产形态 Web/Worker 镜像与就绪检查。
+
+GitHub Actions 工作流 `CI` 包含两个顺序门禁：
+
+- `quality`：格式、Lint、类型、单元/集成测试、构建和 Playwright。
+- `container-smoke`：仅在 `quality` 成功后构建隔离镜像并验证 Web/Worker 就绪。
+
+CI 使用 PostgreSQL 17 与 Redis 7.4 服务容器和测试专用本地凭据，不访问生产环境。
 
 影响核心流程或 UI 的变更还需要相关 Playwright 与截图检查。
 
