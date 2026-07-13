@@ -143,6 +143,8 @@ GitHub Actions 工作流 `CI` 包含两个顺序门禁：
 - `quality`：格式、Lint、类型、单元/集成测试、构建和 Playwright。
 - `container-smoke`：仅在 `quality` 成功后构建隔离镜像并验证 Web/Worker 就绪。
 
+`pnpm containers:smoke` 会先等待 PostgreSQL、Redis、迁移、Web 和 Worker 全部成功，再单独运行验证容器。任何启动或验证失败都会返回非零，并在清理 Compose 项目前写入 `container-smoke.log` 供 CI 上传。
+
 CI 使用 PostgreSQL 17 与 Redis 7.4 服务容器和测试专用本地凭据，不访问生产环境。
 
 影响核心流程或 UI 的变更还需要相关 Playwright 与截图检查。

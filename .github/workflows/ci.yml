@@ -82,8 +82,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm containers:smoke
       - if: failure()
-        run: docker compose -p kagura-blog-smoke -f infra/docker/compose.smoke.yml logs --no-color > container-smoke.log
-      - if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: container-smoke-logs

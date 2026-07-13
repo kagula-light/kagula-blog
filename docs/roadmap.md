@@ -21,7 +21,7 @@
 
 ## 阶段 1：仓库与工程基础
 
-状态：核心工程与服务器隔离开发基础设施已实现，生产形态镜像 smoke 与 CI 首次远端运行仍待完成。
+状态：核心工程与服务器隔离开发基础设施已实现，Worker 服务器 smoke 已通过；Linux Web 镜像与 CI 首次远端运行仍待完成。
 
 目标：建立可重复构建、可测试的 pnpm workspace。
 
@@ -37,7 +37,9 @@
 
 2026-07-13 已在目标服务器验证 PostgreSQL 17、Redis 7.4、MinIO 与 MinIO Client 精确标签，`kagura-blog-dev` 独立 Compose 的三个长期服务均健康，MinIO 初始化幂等且创建 `kagura-assets`。现有 `sub2api` 及其数据库、Redis 未被修改。
 
-待完成：生产形态容器 smoke、依赖停止/恢复验证和 CI 首次远端运行结果。用户已要求不再启动本机服务，后续运行验收以服务器状态为准。
+Worker 构建产物已在服务器验证 PostgreSQL 17 迁移、初始就绪、Redis 停止时 readiness 503/liveness 200、Redis 重启后 readiness 恢复 200，以及迁移失败阻止 Web/Worker 启动。验证同时发现并修复了 ESM bundle 的 CommonJS 动态加载问题和容器 smoke 的假阳性退出码。
+
+待完成：由 Linux CI 构建 Web 镜像并运行完整 Web/Worker smoke，以及确认 CI 首次远端结果。Windows standalone 产物不可移植到 Linux，不能作为正式镜像验收依据。当前仓库没有 Git remote，需配置 GitHub 仓库后触发。用户已要求不再启动本机服务，后续运行验收以服务器状态为准。
 
 退出条件：
 

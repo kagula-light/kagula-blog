@@ -17,7 +17,7 @@
     "format:check": "prettier --check .",
     "infra:up": "docker compose -p kagura-blog-dev -f infra/docker/compose.dev.yml up -d",
     "infra:down": "docker compose -p kagura-blog-dev -f infra/docker/compose.dev.yml down",
-    "containers:smoke": "docker compose -p kagura-blog-smoke -f infra/docker/compose.smoke.yml up --build --abort-on-container-failure --exit-code-from smoke"
+    "containers:smoke": "node infra/scripts/run-container-smoke.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1",
