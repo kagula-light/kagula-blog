@@ -1,0 +1,77 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: kagura_blog_smoke
+      POSTGRES_USER: kagura
+      POSTGRES_PASSWORD: smoke_only_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kagura -d kagura_blog_smoke"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    networks: [smoke]
+
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    networks: [smoke]
+
+  migrate:
+    image: kagura-blog-worker:smoke
+    build:
+      context: ../..
+      dockerfile: infra/docker/worker.Dockerfile
+    command: ["node", "dist/migrate.js"]
+    environment: &runtime-env
+      NODE_ENV: production
+      APP_URL: http://web:3000
+      APP_TIMEZONE: Asia/Shanghai
+      APP_RELEASE: smoke
+      LOG_LEVEL: info
+      DATABASE_URL: postgresql://kagura:smoke_only_password@postgres:5432/kagura_blog_smoke
+      REDIS_URL: redis://redis:6379/0
+      MIGRATIONS_DIR: /app/drizzle
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    networks: [smoke]
+
+  web:
+    image: kagura-blog-web:smoke
+    build:
+      context: ../..
+      dockerfile: infra/docker/web.Dockerfile
+    environment: *runtime-env
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    networks: [smoke]
+
+  worker:
+    image: kagura-blog-worker:smoke
+    environment:
+      <<: *runtime-env
+      WORKER_HEALTH_PORT: 3001
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    networks: [smoke]
+
+  smoke:
+    image: node:22.23.1-alpine
+    working_dir: /verify
+    command: ["node", "verify-containers.mjs"]
+    volumes:
+      - ../scripts/verify-containers.mjs:/verify/verify-containers.mjs:ro
+    depends_on:
+      web: { condition: service_healthy }
+      worker: { condition: service_healthy }
+    networks: [smoke]
+
+networks:
+  smoke:
+    name: kagura-blog-smoke
