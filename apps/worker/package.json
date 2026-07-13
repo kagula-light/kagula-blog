@@ -6,15 +6,20 @@
   "scripts": {
     "dev": "node --env-file-if-exists=../../.env.local --import tsx --watch src/index.ts",
     "migrate": "node --env-file-if-exists=../../.env.local --import tsx src/migrate.ts",
+    "seed:admin": "node --env-file-if-exists=../../.env.local --import tsx src/seed-admin.ts",
+    "seed:admin:runtime": "node dist/seed-admin.js",
     "build": "tsup && node scripts/verify-runtime-bundle.mjs",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
+    "@kagura/auth": "workspace:*",
     "@kagura/config": "workspace:*",
     "@kagura/contracts": "workspace:*",
     "@kagura/database": "workspace:*",
+    "@node-rs/argon2": "2.0.2",
+    "drizzle-orm": "0.45.2",
     "pino": "10.3.1",
     "redis": "6.1.0"
   },

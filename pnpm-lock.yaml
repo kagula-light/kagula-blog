@@ -121,6 +121,9 @@ importers:
 
   apps/worker:
     dependencies:
+      '@kagura/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@kagura/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -130,6 +133,12 @@ importers:
       '@kagura/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@node-rs/argon2':
+        specifier: 2.0.2
+        version: 2.0.2
+      drizzle-orm:
+        specifier: 0.45.2
+        version: 0.45.2(postgres@3.4.9)
       pino:
         specifier: 10.3.1
         version: 10.3.1
