@@ -21,7 +21,7 @@
 
 ## 阶段 1：仓库与工程基础
 
-状态：实施计划已生成，尚未开始编码。
+状态：核心工程已实现，容器执行验收受 Docker Hub 网络阻断，尚未完全退出阶段 1。
 
 目标：建立可重复构建、可测试的 pnpm workspace。
 
@@ -32,6 +32,10 @@
 - 建立 PostgreSQL、Redis 和本地对象存储替身。
 - 建立 CI 基线、开发 Compose 和镜像构建验证。
 - Pull Request 从第一阶段开始执行 Lint、类型检查、测试、迁移和构建，不配置生产部署凭据。
+
+已完成：workspace、Web/Worker 健康服务、环境校验、基线迁移、单元/集成测试基础、Playwright、生产形态镜像声明和两级 CI 门禁。
+
+待完成：精确镜像 manifest 校验、隔离开发 Compose、本机容器 smoke 与依赖停止/恢复验证；CI 首次远端运行结果也需确认。2026-07-13 本机执行 `pnpm containers:smoke` 在镜像获取阶段 90 秒无进展后超时，未创建任何 smoke 容器，已清理 Compose 项目。
 
 退出条件：
 

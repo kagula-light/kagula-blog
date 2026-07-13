@@ -75,10 +75,14 @@ Web 运行凭据不应具有读取数据库备份的权限。
 | `HOTSPOT_MAX_RESPONSE_BYTES` | 最大响应体 | 否 |
 | `HOTSPOT_CONCURRENCY` | 来源并发上限 | 否 |
 | `GITHUB_TOKEN` | 提升 GitHub API 限额，可选 | 是 |
+| `WORKER_HEALTH_PORT` | Worker 健康 HTTP 端口，当前本地默认 `3001` | 否 |
+| `MIGRATIONS_DIR` | Worker 迁移命令读取的迁移目录 | 否 |
 
 各来源启用状态存入数据库并由管理员控制，不需要为每次暂停修改环境。
 
 ## GitHub Actions
+
+当前阶段 1 CI 只使用测试专用的本地 PostgreSQL/Redis 连接信息，不配置生产 Secret。以下生产 Secret 延后到阶段 6：
 
 生产 Environment Secret 计划包含：
 

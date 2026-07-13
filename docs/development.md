@@ -1,29 +1,28 @@
 # 本地开发
 
-当前仓库尚未创建应用脚手架。本文件描述脚手架完成后的开发契约，实际命令必须与根目录 `package.json` 保持一致。
+当前仓库已创建应用脚手架，实际命令以根目录 `package.json` 为准。
 
-## 计划前置条件
+## 前置条件
 
 - Git。
-- 当前稳定 Node.js LTS。
-- Corepack 管理的 pnpm。
+- Node.js `22.23.1`。
+- pnpm `11.11.0`。
 - Docker Desktop 或兼容 Docker Engine。
 - 可运行 Chromium 的 Playwright 环境。
 
 Node 和 pnpm 版本在脚手架提交中固定，不依赖开发者机器的隐式版本。
 
-## 计划启动流程
+## 当前启动流程
 
 ~~~bash
 corepack enable
 pnpm install
-docker compose -f infra/docker/compose.dev.yml up -d
-pnpm db:migrate
-pnpm db:seed
+pnpm infra:up
+pnpm --filter @kagura/database db:migrate
 pnpm dev
 ~~~
 
-在这些文件实际出现前，不要运行上述命令。
+注意：`infra/docker/compose.dev.yml` 仍因 Docker Hub manifest 校验超时而未创建，`pnpm infra:up` 当前不可用。不要连接或复用机器上其他项目的 PostgreSQL/Redis。
 
 本地开发使用：
 
@@ -34,7 +33,7 @@ pnpm dev
 
 开发环境不得连接生产数据库、生产 Redis 或生产 R2 桶。
 
-## 计划命令
+## 当前命令
 
 | 命令 | 作用 |
 | --- | --- |
@@ -45,12 +44,12 @@ pnpm dev
 | `pnpm test:integration` | 容器化集成测试 |
 | `pnpm test:e2e` | Playwright 核心流程 |
 | `pnpm build` | 生产构建 |
-| `pnpm db:generate` | 生成迁移草案 |
-| `pnpm db:migrate` | 应用迁移 |
-| `pnpm db:seed` | 创建开发数据 |
-| `pnpm worker:once` | 本地执行一次任务 |
+| `pnpm --filter @kagura/database db:generate` | 生成迁移草案 |
+| `pnpm --filter @kagura/database db:migrate` | 应用迁移 |
+| `pnpm --filter @kagura/worker migrate` | 运行 Worker 迁移入口 |
+| `pnpm containers:smoke` | 构建并验证隔离生产形态容器 |
 
-命令名称在脚手架阶段可以调整，但必须同步更新本文、README 和 CI。
+Playwright 使用 Web standalone 产物，运行 `pnpm test:e2e` 前先运行 `pnpm build`。
 
 ## 环境变量
 
