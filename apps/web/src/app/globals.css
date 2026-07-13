@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  --background: #0c0c0e;
+  --ink: #f2f2f4;
+  --muted: #b8b7be;
+  --rune: oklch(0.74 0.16 150);
+  --star: oklch(0.7 0.14 275);
+  --moon: oklch(0.68 0.17 340);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  min-height: 100dvh;
+  margin: 0;
+  background: var(--background);
+  color: var(--ink);
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+::selection {
+  background: var(--rune);
+  color: var(--background);
+}
+
+a,
+button {
+  outline-color: var(--rune);
+  outline-offset: 4px;
+}
+
+.foundation-shell {
+  width: min(100% - 2rem, 72rem);
+  margin-inline: auto;
+  padding-block: 2rem 4rem;
+}
+
+.foundation-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #303034;
+}
+
+.foundation-brand {
+  margin: 0;
+  font-family: ui-serif, "Songti SC", serif;
+  font-size: 1.125rem;
+  font-weight: 650;
+}
+
+.foundation-author {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.foundation-content {
+  max-width: 45rem;
+  padding-top: clamp(4rem, 12vh, 7rem);
+}
+
+.foundation-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin: 0 0 1.5rem;
+  color: var(--rune);
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.foundation-status::before {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: currentColor;
+  content: "";
+}
+
+.foundation-title {
+  max-width: 12ch;
+  margin: 0;
+  font-family: ui-serif, "Songti SC", serif;
+  font-size: 5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.foundation-copy {
+  max-width: 65ch;
+  margin: 1.75rem 0 0;
+  color: var(--muted);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  text-wrap: pretty;
+}
+
+.foundation-lights {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 3rem;
+}
+
+.foundation-light {
+  width: 2.75rem;
+  height: 0.1875rem;
+  background: var(--rune);
+}
+
+.foundation-light:nth-child(2) {
+  background: var(--star);
+}
+
+.foundation-light:nth-child(3) {
+  background: var(--moon);
+}
+
+@media (max-width: 36rem) {
+  .foundation-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .foundation-title {
+    font-size: 2.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
