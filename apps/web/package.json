@@ -11,6 +11,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@kagura/auth": "workspace:*",
     "@kagura/config": "workspace:*",
     "@kagura/contracts": "workspace:*",
     "@kagura/database": "workspace:*",

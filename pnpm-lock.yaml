@@ -63,6 +63,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@kagura/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@kagura/config':
         specifier: workspace:*
         version: link:../../packages/config
