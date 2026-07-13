@@ -27,7 +27,7 @@ blob-report/
 *.log
 logs/
 tmp/
-data/
+/data/
 
 # Editors and operating systems
 .idea/
