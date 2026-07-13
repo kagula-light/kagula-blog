@@ -30,6 +30,7 @@ These versions were checked against npm on 2026-07-10. Use exact versions and co
 | Package | Version |
 | --- | --- |
 | `next`, `eslint-config-next` | `16.2.10` |
+| `sharp` | `0.34.5` |
 | `react`, `react-dom` | `19.2.7` |
 | `typescript` | `6.0.3` |
 | `pnpm` | `11.11.0` |
@@ -206,6 +207,7 @@ Create the root `package.json` with `private: true`, `packageManager: "pnpm@11.1
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.10",
     "prettier": "3.9.5",
+    "sharp": "0.34.5",
     "tailwindcss": "4.3.2",
     "tsx": "4.23.0",
     "tsup": "8.5.1",
@@ -224,10 +226,17 @@ packages:
   - apps/*
   - packages/*
 
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+
 injectWorkspacePackages: true
 syncInjectedDepsAfterScripts:
   - build
 ~~~
+
+Keep `allowBuilds` as an explicit allow list. `sharp` requires build permission for Next.js image optimization; do not replace the list with a blanket script allowance.
 
 - [ ] **Step 3: Add formatting and Docker context rules**
 
