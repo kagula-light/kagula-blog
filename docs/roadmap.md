@@ -21,7 +21,7 @@
 
 ## 阶段 1：仓库与工程基础
 
-状态：核心工程与服务器隔离开发基础设施已实现，Worker 服务器 smoke 已通过；Linux Web 镜像与 CI 首次远端运行仍待完成。
+状态：已完成。阶段 1 退出条件已由目标服务器隔离基础设施验证和 GitHub Actions Linux 容器验收共同满足。
 
 目标：建立可重复构建、可测试的 pnpm workspace。
 
@@ -39,7 +39,9 @@
 
 Worker 构建产物已在服务器验证 PostgreSQL 17 迁移、初始就绪、Redis 停止时 readiness 503/liveness 200、Redis 重启后 readiness 恢复 200，以及迁移失败阻止 Web/Worker 启动。验证同时发现并修复了 ESM bundle 的 CommonJS 动态加载问题和容器 smoke 的假阳性退出码。
 
-待完成：由 Linux CI 构建 Web 镜像并运行完整 Web/Worker smoke，以及确认 CI 首次远端结果。Windows standalone 产物不可移植到 Linux，不能作为正式镜像验收依据。当前仓库没有 Git remote，需配置 GitHub 仓库后触发。用户已要求不再启动本机服务，后续运行验收以服务器状态为准。
+2026-07-13 已接入 `https://github.com/kagula-light/kagula-light.git`。提交 `4939d95` 的 GitHub Actions `quality` 与 `container-smoke` 均通过：Ubuntu runner 完成冻结依赖安装、格式、Lint、类型检查、30 个单元测试、迁移集成测试、Web/Worker 构建、Chromium E2E、Linux 镜像构建、迁移和 Web/Worker 就绪检查。首次运行发现未跟踪的 `site.ts`，第二次运行发现 smoke 的生产 `APP_URL` 使用内部 HTTP 地址；两处根因均修复后第三次运行通过。
+
+阶段 1 不发布 GHCR 镜像、不连接目标服务器，也不持有生产 Secret；这些权限继续保留到阶段 6。用户已要求不再启动本机服务，后续真实运行验收继续以服务器的独立博客环境为准。
 
 退出条件：
 

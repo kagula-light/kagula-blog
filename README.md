@@ -6,14 +6,14 @@
 
 ## 当前状态
 
-当前仓库处于“阶段 1 核心工程和服务器隔离基础设施已实现，Linux Web 镜像 CI 验收待执行”的阶段。
+当前仓库已完成阶段 1 工程基础验收，下一实施入口是阶段 2 的身份、权限与内容核心。
 
 - 产品范围、视觉方向、架构、安全边界和部署方式已经确认。
 - 已建立 Node 22.23.1、pnpm 11.11.0 workspace、Next.js Web、独立 Worker、共享配置/契约/数据库包和基线迁移。
 - Web 提供 `/api/health/live` 与 `/api/health/ready`，Worker 提供 `/health/live` 与 `/health/ready`。
 - GitHub Actions 已包含 `quality` 和 `container-smoke` 门禁，不包含生产部署权限。
 - 目标服务器上的独立 PostgreSQL 17、Redis 7.4、MinIO 已验证健康；Worker 迁移、就绪失败与恢复路径已通过服务器容器验证。
-- Web 的 Windows standalone 产物不可移植到 Linux，正式 Web 镜像必须由 GitHub Actions 的 Linux 运行器构建。当前仓库没有 Git remote，尚不能触发首次完整 CI。
+- GitHub 仓库已接入；提交 `4939d95` 的 `quality` 与 `container-smoke` 已在 Ubuntu runner 通过，包括迁移、Web/Worker Linux 镜像、Chromium E2E 和容器就绪检查。
 - 身份、内容、热点、后台、最终视觉和 Live2D 均属于后续阶段，尚未实现。
 - 不要将文档中描述的能力当作已经实现的代码。
 

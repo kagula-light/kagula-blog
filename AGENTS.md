@@ -7,9 +7,10 @@
 截至 2026-07-13：
 
 - 设计规格已由用户逐段确认。
-- 阶段 1 的 workspace、Web、Worker、共享包、迁移、Playwright、镜像声明和 CI 已创建。
-- Web/Worker 单元测试、类型检查、构建和 Web Chromium 冒烟已在本机通过。
-- 本机 Docker Hub manifest 请求超时；开发 Compose 和完整容器冒烟仍未执行成功，阶段 1 尚未完全验收。
+- 阶段 1 的 workspace、Web、Worker、共享包、迁移、Playwright、镜像声明和 CI 已完成。
+- 提交 `4939d95` 的 GitHub Actions `quality` 与 `container-smoke` 已在 Ubuntu runner 通过，覆盖迁移、Linux 镜像、Chromium E2E 和 Web/Worker 就绪检查。
+- 目标服务器的独立 PostgreSQL、Redis、MinIO 及 Worker 失败恢复路径已验证；Web/Worker 尚未作为生产应用部署到目标服务器。
+- 下一实施入口是阶段 2 的身份、权限与内容核心。
 - 不要将工程基础页面描述为最终博客，也不要声称身份、内容、热点、后台或 Live2D 已实现。
 
 ## React 强制要求
