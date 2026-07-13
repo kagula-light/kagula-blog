@@ -21,6 +21,16 @@ function assertReadonlyContracts(input: HealthResponseInput, response: HealthRes
 
   // @ts-expect-error Health response properties are readonly.
   response.release = "next-release";
+
+  // @ts-expect-error exactOptionalPropertyTypes requires omitting checks instead of assigning undefined.
+  const responseWithUndefinedChecks: HealthResponse = {
+    service: "web",
+    status: "ok",
+    release: "abc123",
+    timestamp: "2026-07-13T12:00:00.000Z",
+    checks: undefined,
+  };
+  void responseWithUndefinedChecks;
 }
 
 describe("createHealthResponse", () => {
