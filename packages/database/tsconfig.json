@@ -1,0 +1,4 @@
+{
+  "extends": "../config/typescript/node.json",
+  "include": ["src/**/*.ts", "test/**/*.ts", "drizzle.config.ts", "vitest.integration.config.ts"]
+}

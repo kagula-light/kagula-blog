@@ -1,0 +1,41 @@
+{
+  "name": "@kagura/database",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./client": {
+      "types": "./src/client.ts",
+      "default": "./src/client.ts"
+    },
+    "./migrate": {
+      "types": "./src/migrate.ts",
+      "default": "./src/migrate.ts"
+    },
+    "./readiness": {
+      "types": "./src/readiness.ts",
+      "default": "./src/readiness.ts"
+    }
+  },
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "test": "vitest run src",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsup src/client.ts src/migrate.ts src/readiness.ts --format esm --dts --out-dir dist",
+    "dev": "tsup src/client.ts src/migrate.ts src/readiness.ts --format esm --watch --out-dir dist"
+  },
+  "dependencies": {
+    "drizzle-orm": "0.45.2",
+    "postgres": "3.4.9",
+    "@kagura/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.1",
+    "drizzle-kit": "0.31.10",
+    "tsup": "8.5.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.10"
+  }
+}
