@@ -1,0 +1,34 @@
+{
+  "name": "@kagura/auth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./password": {
+      "types": "./src/password.ts",
+      "default": "./src/password.ts"
+    },
+    "./session-token": {
+      "types": "./src/session-token.ts",
+      "default": "./src/session-token.ts"
+    },
+    "./username": {
+      "types": "./src/username.ts",
+      "default": "./src/username.ts"
+    }
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "build": "tsup src/password.ts src/session-token.ts src/username.ts --format esm --dts --out-dir dist"
+  },
+  "dependencies": {
+    "@node-rs/argon2": "2.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.1",
+    "tsup": "8.5.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.10"
+  }
+}
