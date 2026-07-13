@@ -46,6 +46,9 @@ jobs:
       TEST_DATABASE_URL: postgresql://kagura:ci_only_password@127.0.0.1:55432/kagura_blog_test
       REDIS_URL: redis://127.0.0.1:56379/0
       TEST_REDIS_URL: redis://127.0.0.1:56379/1
+      SESSION_SECRET: ci_only_session_secret_not_for_production
+      SESSION_COOKIE_NAME: kagura_ci_session
+      SESSION_TTL_HOURS: 24
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

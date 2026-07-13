@@ -37,6 +37,9 @@ services:
       DATABASE_URL: postgresql://kagura:smoke_only_password@postgres:5432/kagura_blog_smoke
       REDIS_URL: redis://redis:6379/0
       MIGRATIONS_DIR: /app/drizzle
+      SESSION_SECRET: smoke_only_session_secret_not_for_production
+      SESSION_COOKIE_NAME: kagura_smoke_session
+      SESSION_TTL_HOURS: 24
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_healthy }
