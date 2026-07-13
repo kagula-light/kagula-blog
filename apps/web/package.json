@@ -8,6 +8,7 @@
     "start": "node .next/standalone/apps/web/server.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:e2e": "playwright test"
   },
   "dependencies": {
@@ -15,6 +16,7 @@
     "@kagura/config": "workspace:*",
     "@kagura/contracts": "workspace:*",
     "@kagura/database": "workspace:*",
+    "drizzle-orm": "0.45.2",
     "next": "16.2.10",
     "react": "19.2.7",
     "react-dom": "19.2.7",
