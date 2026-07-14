@@ -36,6 +36,7 @@ export function SiteHeader({ current }: SiteHeaderProps) {
           <Link className="site-search-link" href="/search">
             搜索
           </Link>
+          <Link href="/register">注册</Link>
           <Link className="site-login-link" href="/login">
             登录
           </Link>

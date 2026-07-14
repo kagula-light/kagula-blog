@@ -29,6 +29,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           <p>使用站点账号进入个人功能或管理后台。</p>
         </div>
         <LoginForm {...(nextPath ? { nextPath } : {})} />
+        <p className="auth-switch">
+          还没有账号？ <a href="/register">注册</a>
+        </p>
         <a className="text-link" href="/">
           返回首页
         </a>

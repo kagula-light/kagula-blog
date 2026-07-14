@@ -44,6 +44,8 @@
 
 当前登录限流以客户端地址和规范化用户名的 SHA-256 摘要为 Redis key，10 分钟最多 5 次失败；Redis key 和日志不包含原始用户名或地址。未知用户名仍执行模块缓存的 dummy Argon2id 校验，避免跳过密码工作。
 
+当前注册入口先执行字段校验，再以客户端地址 SHA-256 摘要执行 Redis 一小时 3 次预算，随后调用 Cloudflare Turnstile。只有挑战通过后才计算 Argon2id 哈希，并在同一 PostgreSQL 事务中创建 `USER`、凭据和摘要会话；规范化用户名冲突返回统一页面消息。注册后跳转只接受与 `APP_URL` 同源的相对路径，失败响应会重置 Turnstile token。
+
 ## 授权
 
 - 每个服务端用例显式声明所需权限。
@@ -142,4 +144,4 @@ CSP 需要为 R2 图片、必要脚本和字体建立最小允许列表。不得
 - 日志扫描不包含常见 Secret 格式。
 - 依赖和容器镜像在 CI 扫描。
 
-阶段 2A 已添加未知用户/错误密码/BANNED 统一结果、限流 key、Cookie 属性、会话撤销、开放重定向和 ADMIN/USER 路由矩阵测试。PR #1 已通过 PostgreSQL/Redis 集成、Chromium 与 Linux 容器验证；目标服务器隔离环境仍待验证。
+阶段 2A 已添加未知用户/错误密码/BANNED 统一结果、限流 key、Cookie 属性、会话撤销、开放重定向和 ADMIN/USER 路由矩阵测试。阶段 4 注册代码新增字段、挑战、限流、重名、安全 Cookie 和同源跳转测试；真实 PostgreSQL/Turnstile Chromium 流程随当前分支 CI 验证。目标服务器隔离环境仍待验证。

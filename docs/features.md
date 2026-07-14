@@ -71,11 +71,14 @@
 当前已实现：
 
 - 用户名密码登录、统一凭据错误、Redis 失败限流和安全 `next` 路径校验。
+- 用户名密码注册、Cloudflare Turnstile、IP 摘要限流和同源注册后跳转。
+- 注册成功创建 `USER`、Argon2id 凭据与摘要会话，并设置现有 HttpOnly/SameSite Cookie。
+- 受保护账号页展示当前身份、账号状态、收藏文章和本人评论审核状态。
 - 数据库摘要会话、HttpOnly/SameSite Cookie、单会话退出和 BANNED 即时失效。
 - ADMIN 登录进入 `/admin`，USER 登录返回公开首页；未登录或 USER 不能进入后台。
 - 一次性管理员 bootstrap 与同名管理员凭据轮换。
 
-尚未实现：公开注册、用户资料、头像、收藏/评论列表、管理员重置密码和 Turnstile。
+尚未实现：用户资料编辑、头像、全部会话管理和管理员重置密码。
 
 - 用户名密码注册。
 - 登录、退出和会话过期。
