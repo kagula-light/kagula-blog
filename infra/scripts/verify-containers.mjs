@@ -20,7 +20,19 @@ for (;;) {
       }
     }),
   );
-  if (results.every(Boolean)) process.exit(0);
+  if (results.every(Boolean)) break;
   if (Date.now() >= deadline) process.exit(1);
   await new Promise((resolve) => setTimeout(resolve, 1_000));
+}
+
+const adminResponse = await fetch("http://web:3000/admin", { redirect: "manual" });
+const loginLocation = adminResponse.headers.get("location");
+console.log(`admin: status=${adminResponse.status} location=${loginLocation ?? "missing"}`);
+if (
+  adminResponse.status !== 307 ||
+  !loginLocation ||
+  new URL(loginLocation, "http://web:3000").pathname !== "/login" ||
+  new URL(loginLocation, "http://web:3000").searchParams.get("next") !== "/admin"
+) {
+  process.exit(1);
 }
