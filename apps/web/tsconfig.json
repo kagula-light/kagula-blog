@@ -1,6 +1,18 @@
 {
   "extends": "../../packages/config/typescript/nextjs.json",
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@kagura/auth/password": ["../../packages/auth/src/password.ts"],
+      "@kagura/auth/session-token": ["../../packages/auth/src/session-token.ts"],
+      "@kagura/auth/username": ["../../packages/auth/src/username.ts"],
+      "@kagura/config/env": ["../../packages/config/src/env.ts"],
+      "@kagura/contracts/health": ["../../packages/contracts/src/health.ts"],
+      "@kagura/database/client": ["../../packages/database/src/client.ts"],
+      "@kagura/database/migrate": ["../../packages/database/src/migrate.ts"],
+      "@kagura/database/readiness": ["../../packages/database/src/readiness.ts"],
+      "@kagura/database/schema": ["../../packages/database/src/schema.ts"]
+    },
     "plugins": [{ "name": "next" }]
   },
   "include": [
