@@ -15,6 +15,8 @@
 
 ## 用户与身份
 
+实现状态：`User`、`Credential`、`Session` 与 `AuditLog` 已由迁移 `0001_identity_core.sql` 建表；本节中头像媒体、全部会话管理 UI 等未落字段或用例仍属于后续阶段。
+
 ### User
 
 关键字段：
@@ -45,6 +47,7 @@
 - 保存不可逆 Token 摘要、用户、过期时间和最后活动时间。
 - 支持单会话退出、全部退出和管理员强制失效。
 - 封禁检查不能只依赖会话创建时的状态。
+- 当前数据库保存 64 位 HMAC-SHA256 Token 摘要；原始 Token 仅进入 HttpOnly Cookie。
 
 ## 内容
 
@@ -182,6 +185,8 @@ stateDiagram-v2
 - 操作者、动作、资源类型和资源 ID。
 - 时间、请求关联 ID 和有限的变化摘要。
 - 发布、审核、角色、用户状态和站点设置变更。
+
+当前已写入的动作是 `ADMIN_BOOTSTRAPPED` 与 `ADMIN_CREDENTIAL_ROTATED`；其余动作随对应业务模块实现。
 
 审计日志不可通过普通后台编辑或删除。
 

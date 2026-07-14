@@ -4,14 +4,16 @@
 
 ## 当前状态
 
-截至 2026-07-13：
+截至 2026-07-14：
 
 - 设计规格已由用户逐段确认。
 - 阶段 1 的 workspace、Web、Worker、共享包、迁移、Playwright、镜像声明和 CI 已完成。
 - 提交 `4939d95` 的 GitHub Actions `quality` 与 `container-smoke` 已在 Ubuntu runner 通过，覆盖迁移、Linux 镜像、Chromium E2E 和 Web/Worker 就绪检查。
 - 目标服务器的独立 PostgreSQL、Redis、MinIO 及 Worker 失败恢复路径已验证；Web/Worker 尚未作为生产应用部署到目标服务器。
-- 下一实施入口是阶段 2 的身份、权限与内容核心。
-- 不要将工程基础页面描述为最终博客，也不要声称身份、内容、热点、后台或 Live2D 已实现。
+- 阶段 2A 的身份 schema、Argon2id 凭据、数据库会话、Redis 登录限流、服务端权限、管理员 bootstrap、登录/退出和受保护后台入口已在分支 `codex/phase-2-auth-content-core` 实现。
+- 阶段 2A 的本地非服务检查已通过；本分支 GitHub Actions 与目标服务器隔离博客环境验收尚未完成，不得提前声称阶段 2A 已关闭。
+- 下一代码入口是阶段 2B 的文章、修订、分类、标签、媒体与发布闭环。
+- 不要将身份基础后台描述为完整管理后台，也不要声称内容、互动、热点、最终视觉或 Live2D 已实现。
 
 ## React 强制要求
 

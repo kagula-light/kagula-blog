@@ -14,7 +14,7 @@
 
 如果不存在，项目仍处于文档/计划阶段。不要运行安装命令，不要声称功能已经实现。
 
-当前这些路径均已存在。先读取实际 `package.json`、`.github/workflows/ci.yml` 和目标包源码；后续业务模块仍可能只是规划。
+当前这些路径均已存在。身份与权限基础代码位于 `packages/auth`、`packages/database`、`apps/web/src/features/auth`、`apps/web/src/server/auth` 和 `apps/web/src/server/permissions`；内容、互动、热点和 Live2D 仍可能只是规划。
 
 ## 推荐阅读路径
 
@@ -39,7 +39,7 @@
 | CI/CD | `docs/deployment.md`、`docs/operations.md` |
 | 测试或验收 | `docs/testing.md` |
 
-审计阶段 1 或排查工程基础问题时，追加阅读 `docs/superpowers/plans/2026-07-10-phase-1-engineering-foundation.md`。新功能从阶段 2 的文件级实施计划开始，不要继续向阶段 1 填入业务能力。
+审计阶段 1 时追加阅读 `docs/superpowers/plans/2026-07-10-phase-1-engineering-foundation.md`；审计身份、登录或权限时读取 `docs/superpowers/plans/2026-07-13-phase-2a-identity-permissions-admin-bootstrap.md`。下一代码入口是阶段 2B 内容核心，不要继续向已完成计划填入新能力。
 
 ## 事实优先级
 
@@ -64,7 +64,15 @@
 - 跨应用契约：`packages/contracts`。
 - 部署与回滚：`infra`。
 
-`apps/web`、`apps/worker` 和三个共享包已存在；`components`、`features`、热点调度和业务 schema 等后续路径仍只是目标结构。
+`apps/web`、`apps/worker`、`packages/auth` 及共享包已存在；认证 `components`、`features/auth`、身份 schema 和管理员 seed 已落地。文章、媒体、评论、互动、热点调度和看板娘模块仍是目标结构。
+
+当前分支关键入口：
+
+- `apps/web/src/features/auth/actions`：登录输入校验、登录与退出 Server Actions。
+- `apps/web/src/server/auth`：Drizzle repository、Redis 限流、Cookie 和当前会话解析。
+- `apps/web/src/app/(auth)/login` 与 `apps/web/src/app/admin`：登录页和权限保护的后台壳。
+- `apps/worker/src/seed-admin.ts`：一次性管理员 bootstrap/凭据轮换命令。
+- `packages/database/drizzle/0001_identity_core.sql`：身份与审计迁移。
 
 ## 开始实现前
 

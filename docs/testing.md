@@ -24,6 +24,8 @@ pnpm build
 
 ## 单元测试
 
+当前身份基础已覆盖 50 个 Web 单元测试、15 个 Worker 单元测试和 12 个 `@kagura/auth` 单元测试；其余条目随对应阶段实现。
+
 覆盖：
 
 - 用户状态和权限策略。
@@ -49,6 +51,8 @@ pnpm build
 - Redis 限流与锁。
 - R2 接口使用本地 S3 兼容服务或明确测试桶。
 
+当前身份集成测试覆盖迁移后 ADMIN/USER 会话解析、单会话撤销、BANNED 即时失效和 Redis 失败预算；只在 CI 或目标服务器隔离测试依赖中运行。
+
 ## 热点适配器
 
 - 使用版本化固定响应样本。
@@ -57,6 +61,8 @@ pnpm build
 - 解析失败必须返回来源级错误。
 
 ## Playwright
+
+当前已有 6 条 Chromium 测试：工程基础健康检查、未登录后台重定向、统一登录错误、ADMIN 登录与 HttpOnly/SameSite Cookie、退出后旧 Cookie 失效、USER 后台拒绝。测试 global setup 只在隔离数据库 upsert `e2e_admin`/`e2e_user` 并撤销旧会话，不进入应用 bundle。
 
 核心流程：
 
@@ -143,7 +149,7 @@ GitHub Actions 工作流 `CI` 包含两个顺序门禁：
 - `quality`：格式、Lint、类型、单元/集成测试、构建和 Playwright。
 - `container-smoke`：仅在 `quality` 成功后构建隔离镜像并验证 Web/Worker 就绪。
 
-`pnpm containers:smoke` 会先等待 PostgreSQL、Redis、迁移、Web 和 Worker 全部成功，再单独运行验证容器。任何启动或验证失败都会返回非零，并在清理 Compose 项目前写入 `container-smoke.log` 供 CI 上传。
+`pnpm containers:smoke` 会先等待 PostgreSQL、Redis、迁移、Web 和 Worker 全部成功，再单独运行验证容器。除 readiness 外，当前还验证未登录 `/admin` 返回带 `next=/admin` 的登录重定向；smoke 不创建管理员。任何启动或验证失败都会返回非零，并在清理 Compose 项目前写入 `container-smoke.log` 供 CI 上传。
 
 CI 使用 PostgreSQL 17 与 Redis 7.4 服务容器和测试专用本地凭据，不访问生产环境。
 

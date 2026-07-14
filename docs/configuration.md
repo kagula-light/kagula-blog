@@ -43,6 +43,16 @@
 
 `SESSION_SECRET` 使用高熵随机值，不与数据库或部署密钥复用。
 
+管理员 bootstrap 是一次性 Worker CLI，不把引导密码加入长期 Worker runtime schema。执行时临时注入：
+
+| 变量 | 作用 | 敏感 |
+| --- | --- | --- |
+| `ADMIN_USERNAME` | 首个管理员用户名；规范化后 3–32 位 | 否 |
+| `ADMIN_DISPLAY_NAME` | 管理员展示名，1–80 位 | 否 |
+| `ADMIN_PASSWORD` | 管理员密码，12–256 位 | 是 |
+
+命令还需要 `DATABASE_URL`。生产执行必须使用不回显且不写入 shell 历史的环境注入方式；日志只记录动作、用户 ID 和发布标识。
+
 ## Cloudflare R2
 
 | 变量 | 作用 | 敏感 |

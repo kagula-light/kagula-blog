@@ -1,6 +1,6 @@
 # 系统架构
 
-本文同时描述已实现的阶段 1 基础和 V1 目标架构。当前已有 Web、Worker、共享配置/契约/数据库包；业务功能目录仍是后续实施目标。
+本文同时描述已实现基础和 V1 目标架构。当前已有 Web、Worker、共享包和阶段 2A 身份/权限模块；文章、互动、热点和 Live2D 目录仍是后续实施目标。
 
 ## 架构目标
 
@@ -42,6 +42,8 @@ flowchart LR
 - 权限入口、数据查询和文件上传协调。
 
 Web 默认使用 Server Components。欢迎场景、Live2D 看板娘、轮播、Markdown 编辑器、目录抽屉和互动按钮等需要浏览器状态的部分使用 Client Components。
+
+当前认证路径由 Server Actions 调用登录用例，Drizzle repository 持久化摘要会话，Redis 只记录失败预算。`/admin` 布局在服务端解析 Cookie、重新读取用户状态并执行权限策略；当前唯一认证 Client Component 是登录表单。
 
 Live2D 运行时位于独立客户端边界内。服务端先输出静态海报和稳定占位，浏览器在首屏完成后动态导入 `l2d-widget`。模型、纹理、动作和表情从自有 R2 资源域加载；加载失败时保留静态海报，不影响其他页面能力。
 
@@ -98,6 +100,7 @@ apps/
         admin/
         api/
       components/
+        auth/
         site/
         article/
         hotspot/
@@ -126,6 +129,7 @@ apps/
       jobs/
       scheduler/
 packages/
+  auth/
   database/
   contracts/
   config/
@@ -145,6 +149,7 @@ infra/
 - `worker` 依赖共享契约和数据库包，不依赖 Web 页面或 React 组件。
 - `packages/contracts` 不依赖任何应用。
 - `packages/database` 不导入 React 或路由代码。
+- `packages/auth` 只提供密码、用户名和会话 Token 原语，不读取 Next.js Cookie 或数据库。
 
 禁止循环依赖。跨功能协作通过显式用例或共享领域标识完成，不通过组件互相调用内部模块。
 

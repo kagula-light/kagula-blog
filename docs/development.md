@@ -55,6 +55,8 @@ pnpm dev
 | `pnpm --filter @kagura/database db:generate` | 生成迁移草案 |
 | `pnpm --filter @kagura/database db:migrate` | 应用迁移 |
 | `pnpm --filter @kagura/worker migrate` | 运行 Worker 迁移入口 |
+| `pnpm --filter @kagura/worker seed:admin` | 在源码环境执行一次性管理员 bootstrap |
+| `pnpm --filter @kagura/worker seed:admin:runtime` | 在 Worker 构建产物中执行管理员 bootstrap |
 | `pnpm containers:smoke` | 构建并验证隔离生产形态容器 |
 
 Playwright 使用 Web standalone 产物，运行 `pnpm test:e2e` 前先运行 `pnpm build`。
@@ -81,10 +83,11 @@ Playwright 使用 Web standalone 产物，运行 `pnpm test:e2e` 前先运行 `p
 
 生产管理员通过一次性 CLI 创建：
 
-- 用户名通过参数传入。
-- 密码从标准输入读取，不进入 Shell 历史。
-- CLI 完成后不保留引导密码。
-- 重复执行时必须拒绝覆盖现有管理员。
+- 只临时读取 `DATABASE_URL`、`ADMIN_USERNAME`、`ADMIN_DISPLAY_NAME` 和 `ADMIN_PASSWORD`。
+- 密码必须通过不回显、不写入 Shell 历史的环境注入提供。
+- 无管理员时创建首个 ACTIVE ADMIN；同一规范化用户名的唯一 ADMIN 再次执行会轮换凭据并恢复 ACTIVE 状态。
+- 已存在另一管理员、用户名属于 USER 或数据库存在多个 ADMIN 时拒绝执行。
+- 命令使用 PostgreSQL advisory transaction lock，创建/轮换均写审计日志，日志不输出用户名、密码、哈希或数据库 URL。
 
 ## React 工作流
 

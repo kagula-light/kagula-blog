@@ -52,6 +52,8 @@ Worker 构建产物已在服务器验证 PostgreSQL 17 迁移、初始就绪、R
 
 ## 阶段 2：身份、权限与内容核心
 
+状态：阶段 2A 身份与权限已完成代码实现和本地非服务检查；当前分支 CI 与目标服务器隔离环境验收待完成。阶段 2B 内容核心尚未开始。
+
 目标：打通管理员发布文章的最短闭环。
 
 范围：
@@ -61,6 +63,10 @@ Worker 构建产物已在服务器验证 PostgreSQL 17 迁移、初始就绪、R
 - 文章、修订、分类、标签、媒体和发布状态。
 - Markdown 编辑、预览、R2 上传和定时发布。
 - 审计日志。
+
+阶段 2A 已实现：身份/凭据/会话/审计 schema、Argon2id、HMAC 摘要会话、Redis 登录限流、管理员 bootstrap、登录/退出、服务端 ADMIN/USER 权限、受保护后台壳，以及对应单元/集成/Playwright/smoke 验收代码。
+
+阶段 2B 下一入口：Post、PostRevision、Category、Tag、MediaAsset，Markdown 编辑预览、R2 存储边界、立即/定时发布和归档。
 
 退出条件：
 
