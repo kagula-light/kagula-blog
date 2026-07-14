@@ -1,7 +1,23 @@
 import { getTableColumns, getTableName } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 
-import { auditLogs, credentials, sessions, userRole, users, userStatus } from "./schema";
+import {
+  auditLogs,
+  categories,
+  credentials,
+  mediaAssets,
+  mediaAssetStatus,
+  posts,
+  postRevisions,
+  postSlugRedirects,
+  postStatus,
+  postTags,
+  sessions,
+  tags,
+  userRole,
+  users,
+  userStatus,
+} from "./schema";
 
 describe("identity schema", () => {
   it("defines stable user role and status enums", () => {
@@ -58,6 +74,88 @@ describe("identity schema", () => {
         "requestId",
         "summary",
         "createdAt",
+      ]),
+    );
+  });
+});
+
+describe("content schema", () => {
+  it("defines stable post and media states", () => {
+    expect(postStatus.enumValues).toEqual(["DRAFT", "SCHEDULED", "PUBLISHED", "ARCHIVED"]);
+    expect(mediaAssetStatus.enumValues).toEqual(["PENDING", "READY", "DELETED"]);
+  });
+
+  it.each([
+    [categories, "categories"],
+    [tags, "tags"],
+    [mediaAssets, "media_assets"],
+    [posts, "posts"],
+    [postTags, "post_tags"],
+    [postRevisions, "post_revisions"],
+    [postSlugRedirects, "post_slug_redirects"],
+  ] as const)("maps a content table to %s", (table, expectedName) => {
+    expect(getTableName(table)).toBe(expectedName);
+  });
+
+  it("contains the required post publication and ownership columns", () => {
+    expect(Object.keys(getTableColumns(posts))).toEqual(
+      expect.arrayContaining([
+        "id",
+        "title",
+        "slug",
+        "excerpt",
+        "markdown",
+        "renderedHtml",
+        "aiSummary",
+        "coverMediaId",
+        "categoryId",
+        "status",
+        "scheduledFor",
+        "publishedAt",
+        "archivedAt",
+        "readingMinutes",
+        "seoTitle",
+        "seoDescription",
+        "socialMediaId",
+        "createdByUserId",
+        "updatedByUserId",
+        "version",
+        "createdAt",
+        "updatedAt",
+      ]),
+    );
+  });
+
+  it("contains immutable revision snapshots and media metadata", () => {
+    expect(Object.keys(getTableColumns(postRevisions))).toEqual(
+      expect.arrayContaining([
+        "id",
+        "postId",
+        "revisionNumber",
+        "title",
+        "slug",
+        "markdown",
+        "renderedHtml",
+        "status",
+        "editorUserId",
+        "createdAt",
+      ]),
+    );
+    expect(Object.keys(getTableColumns(mediaAssets))).toEqual(
+      expect.arrayContaining([
+        "id",
+        "ownerUserId",
+        "objectKey",
+        "mimeType",
+        "byteSize",
+        "width",
+        "height",
+        "checksumSha256",
+        "altText",
+        "status",
+        "createdAt",
+        "updatedAt",
+        "deletedAt",
       ]),
     );
   });
