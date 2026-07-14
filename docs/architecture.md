@@ -1,6 +1,6 @@
 # 系统架构
 
-本文同时描述已实现基础和 V1 目标架构。当前已有 Web、Worker、共享包、阶段 2A 身份/权限和阶段 2B 内容核心；互动、热点和 Live2D 目录仍是后续实施目标。
+本文同时描述已实现基础和 V1 目标架构。当前已有 Web、Worker、共享包、身份/权限、内容核心和阶段 3 公开查询/路由；互动、真实热点和 Live2D 目录仍是后续实施目标。
 
 ## 架构目标
 
@@ -44,6 +44,8 @@ flowchart LR
 Web 默认使用 Server Components。欢迎场景、Live2D 看板娘、轮播、Markdown 编辑器、目录抽屉和互动按钮等需要浏览器状态的部分使用 Client Components。
 
 当前认证路径由 Server Actions 调用登录用例，Drizzle repository 持久化摘要会话，Redis 只记录失败预算。文章和媒体管理由服务端权限策略、事务 repository 和 Server Actions 组成；`/admin` 布局在服务端解析 Cookie 并重新读取用户状态，只有登录表单、文章编辑器和媒体上传表单是 Client Components。
+
+公开站点通过独立 public post repository 读取 `PUBLISHED` 且具有发布时间的文章；首页、文章、分类、标签、搜索、归档、RSS 和 Sitemap 共用这一边界。欢迎场景是聚焦的 Client Component，正文、目录和发现页保持 Server Component 或原生 HTML 交互。
 
 Live2D 运行时位于独立客户端边界内。服务端先输出静态海报和稳定占位，浏览器在首屏完成后动态导入 `l2d-widget`。模型、纹理、动作和表情从自有 R2 资源域加载；加载失败时保留静态海报，不影响其他页面能力。
 

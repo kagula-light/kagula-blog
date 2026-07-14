@@ -50,7 +50,7 @@
 
 实施计划必须引用真实文件、实际命令和可验证的完成标准。在脚手架建立前，不得编造不存在的命令或文件。
 
-阶段 1 已完成：提交 `4939d95` 的 GitHub Actions `quality` 与 `container-smoke` 已通过。阶段 2A 已完成代码实现和 PR #1 CI；阶段 2B 内容核心已由 GitHub Actions `29310663015` 完成集成、Chromium 和 Linux 容器验收，目标服务器隔离验收仍待完成。阶段 3 公开博客正在实施。
+阶段 1 已完成：提交 `4939d95` 的 GitHub Actions `quality` 与 `container-smoke` 已通过。阶段 2 身份、权限和内容核心已由 GitHub Actions `29310663015` 完成集成、Chromium 和 Linux 容器验收。阶段 3 公开博客已完成当前分支代码与本地非服务检查，新增集成、浏览器和容器验收仍待 GitHub Actions；目标服务器尚未部署。
 
 ## 文档状态规则
 

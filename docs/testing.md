@@ -24,7 +24,7 @@ pnpm build
 
 ## 单元测试
 
-当前代码通过 134 个 Web 单元测试、18 个 Worker 单元测试、20 个数据库单元测试、13 个配置单元测试、12 个 `@kagura/auth` 单元测试和 4 个契约单元测试，共 201 个 workspace 单元测试；数据库/R2 集成与 Playwright 由 CI 执行。
+当前代码通过 147 个 Web 单元测试、18 个 Worker 单元测试、21 个数据库单元测试、13 个配置单元测试、12 个 `@kagura/auth` 单元测试和 4 个契约单元测试，共 215 个 workspace 单元测试；数据库/R2 集成与 Playwright 由 CI 执行。
 
 覆盖：
 
@@ -62,7 +62,7 @@ pnpm build
 
 ## Playwright
 
-当前已有 7 条 Chromium 测试：工程基础健康检查、未登录后台重定向、统一登录错误、ADMIN 登录与 HttpOnly/SameSite Cookie、退出后旧 Cookie 失效、USER 后台拒绝，以及管理员创建/预览/发布/归档文章。测试 global setup 只在隔离数据库 upsert `e2e_admin`/`e2e_user`、清理其文章并撤销旧会话，不进入应用 bundle。
+当前已定义 12 条 Chromium 测试：健康检查、未登录后台重定向、统一登录错误、ADMIN 登录与 HttpOnly/SameSite Cookie、退出后旧 Cookie 失效、USER 后台拒绝、管理员文章生命周期，以及欢迎场景会话、公开文章/搜索、草稿隔离、移动端溢出和减少动画。测试 global setup 只在隔离数据库 upsert `e2e_admin`/`e2e_user`、清理其文章、撤销旧会话并创建固定公开/草稿文章，不进入应用 bundle。新增 5 条公开博客流程需以当前分支 GitHub Actions 结果为准。
 
 核心流程：
 
