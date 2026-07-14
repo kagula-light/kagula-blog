@@ -74,9 +74,10 @@ describe("login service", () => {
 
   it("returns the uniform credential result for a banned identity", async () => {
     const dependencies = createDependencies({
-      findLoginIdentity: vi.fn(
-        async (): Promise<LoginIdentity> => ({ ...activeAdmin, status: "BANNED" }),
-      ),
+      findLoginIdentity: vi.fn(async (): Promise<LoginIdentity> => ({
+        ...activeAdmin,
+        status: "BANNED",
+      })),
       verifyPassword: vi.fn(async () => true),
     });
     const login = createLoginService(dependencies);

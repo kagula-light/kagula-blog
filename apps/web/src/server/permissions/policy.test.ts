@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  canAccessAdmin,
-  canCreateComment,
-  type PermissionIdentity,
-} from "./policy";
+import { canAccessAdmin, canCreateComment, type PermissionIdentity } from "./policy";
 
 const identity = (
   role: PermissionIdentity["role"],

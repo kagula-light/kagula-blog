@@ -26,7 +26,10 @@ export function evaluateFailureBudget(count: number, ttlSeconds: number): Failur
   return { allowed: false, retryAfterSeconds: Math.max(1, ttlSeconds) };
 }
 
-async function withRedis<T>(redisUrl: string, operation: (client: RedisClientType) => Promise<T>): Promise<T> {
+async function withRedis<T>(
+  redisUrl: string,
+  operation: (client: RedisClientType) => Promise<T>,
+): Promise<T> {
   const client = createClient({
     url: redisUrl,
     socket: { connectTimeout: 5_000, reconnectStrategy: false },

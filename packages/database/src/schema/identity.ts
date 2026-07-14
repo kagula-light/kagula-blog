@@ -1,4 +1,13 @@
-import { index, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import {
+  index,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 export const userRole = pgEnum("user_role", ["ADMIN", "USER"]);
 export const userStatus = pgEnum("user_status", ["ACTIVE", "MUTED", "BANNED"]);
@@ -15,12 +24,8 @@ export const users = pgTable(
     role: userRole("role").default("USER").notNull(),
     status: userStatus("status").default("ACTIVE").notNull(),
     biography: text("biography"),
-    createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" })
-      .defaultNow()
-      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
     lastLoginAt: timestamp("last_login_at", { withTimezone: true, mode: "date" }),
   },
   (table) => [
@@ -52,9 +57,7 @@ export const sessions = pgTable(
       .defaultNow()
       .notNull(),
     revokedAt: timestamp("revoked_at", { withTimezone: true, mode: "date" }),
-    createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
-      .defaultNow()
-      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
   },
   (table) => [
     index("sessions_user_revoked_idx").on(table.userId, table.revokedAt),

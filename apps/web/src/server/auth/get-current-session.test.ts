@@ -27,10 +27,7 @@ describe("resolveCurrentSession", () => {
         findSessionIdentity,
       }),
     ).resolves.toEqual(activeAdmin);
-    expect(findSessionIdentity).toHaveBeenCalledWith(
-      digestSessionToken("raw-token", secret),
-      now,
-    );
+    expect(findSessionIdentity).toHaveBeenCalledWith(digestSessionToken("raw-token", secret), now);
   });
 
   it("returns null for a missing token or database session", async () => {

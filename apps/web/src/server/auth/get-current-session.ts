@@ -19,10 +19,7 @@ export interface ResolveCurrentSessionInput {
   readonly token: string | null;
   readonly sessionSecret: string;
   readonly now: Date;
-  readonly findSessionIdentity: (
-    digest: string,
-    now: Date,
-  ) => Promise<SessionIdentity | null>;
+  readonly findSessionIdentity: (digest: string, now: Date) => Promise<SessionIdentity | null>;
 }
 
 export async function resolveCurrentSession({
