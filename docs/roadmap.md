@@ -39,7 +39,7 @@
 
 Worker 构建产物已在服务器验证 PostgreSQL 17 迁移、初始就绪、Redis 停止时 readiness 503/liveness 200、Redis 重启后 readiness 恢复 200，以及迁移失败阻止 Web/Worker 启动。验证同时发现并修复了 ESM bundle 的 CommonJS 动态加载问题和容器 smoke 的假阳性退出码。
 
-2026-07-13 已接入 `https://github.com/kagula-light/kagula-light.git`。提交 `4939d95` 的 GitHub Actions `quality` 与 `container-smoke` 均通过：Ubuntu runner 完成冻结依赖安装、格式、Lint、类型检查、30 个单元测试、迁移集成测试、Web/Worker 构建、Chromium E2E、Linux 镜像构建、迁移和 Web/Worker 就绪检查。首次运行发现未跟踪的 `site.ts`，第二次运行发现 smoke 的生产 `APP_URL` 使用内部 HTTP 地址；两处根因均修复后第三次运行通过。
+2026-07-13 已接入 `https://github.com/kagula-light/kagula-blog.git`（2026-07-14 从同名个人资料仓库改名）。提交 `4939d95` 的 GitHub Actions `quality` 与 `container-smoke` 均通过：Ubuntu runner 完成冻结依赖安装、格式、Lint、类型检查、30 个单元测试、迁移集成测试、Web/Worker 构建、Chromium E2E、Linux 镜像构建、迁移和 Web/Worker 就绪检查。首次运行发现未跟踪的 `site.ts`，第二次运行发现 smoke 的生产 `APP_URL` 使用内部 HTTP 地址；两处根因均修复后第三次运行通过。
 
 阶段 1 不发布 GHCR 镜像、不连接目标服务器，也不持有生产 Secret；这些权限继续保留到阶段 6。用户已要求不再启动本机服务，后续真实运行验收继续以服务器的独立博客环境为准。
 
