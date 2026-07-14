@@ -107,9 +107,6 @@ CREATE TABLE "tags" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-INSERT INTO "categories" ("id", "name", "slug", "description")
-VALUES ('00000000-0000-4000-8000-000000000001', '未分类', 'uncategorized', '默认文章分类')
-ON CONFLICT ("slug") DO NOTHING;--> statement-breakpoint
 ALTER TABLE "media_assets" ADD CONSTRAINT "media_assets_owner_user_id_users_id_fk" FOREIGN KEY ("owner_user_id") REFERENCES "public"."users"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "post_revisions" ADD CONSTRAINT "post_revisions_post_id_posts_id_fk" FOREIGN KEY ("post_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "post_revisions" ADD CONSTRAINT "post_revisions_cover_media_id_media_assets_id_fk" FOREIGN KEY ("cover_media_id") REFERENCES "public"."media_assets"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
@@ -125,6 +122,9 @@ ALTER TABLE "posts" ADD CONSTRAINT "posts_social_media_id_media_assets_id_fk" FO
 ALTER TABLE "posts" ADD CONSTRAINT "posts_created_by_user_id_users_id_fk" FOREIGN KEY ("created_by_user_id") REFERENCES "public"."users"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "posts" ADD CONSTRAINT "posts_updated_by_user_id_users_id_fk" FOREIGN KEY ("updated_by_user_id") REFERENCES "public"."users"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "categories_slug_unique" ON "categories" USING btree ("slug");--> statement-breakpoint
+INSERT INTO "categories" ("id", "name", "slug", "description")
+VALUES ('00000000-0000-4000-8000-000000000001', '未分类', 'uncategorized', '默认文章分类')
+ON CONFLICT ("slug") DO NOTHING;--> statement-breakpoint
 CREATE UNIQUE INDEX "media_assets_object_key_unique" ON "media_assets" USING btree ("object_key");--> statement-breakpoint
 CREATE INDEX "media_assets_owner_status_idx" ON "media_assets" USING btree ("owner_user_id","status");--> statement-breakpoint
 CREATE UNIQUE INDEX "post_revisions_post_number_unique" ON "post_revisions" USING btree ("post_id","revision_number");--> statement-breakpoint
