@@ -43,6 +43,8 @@
 
 `SESSION_SECRET` 使用高熵随机值，不与数据库或部署密钥复用。
 
+本地、CI 和 Playwright 使用 Cloudflare 官方 Turnstile 测试键；生产通过受限环境文件和 GitHub Environment 注入真实键。`TURNSTILE_SECRET_KEY` 不得进入客户端 bundle、日志或数据库。域名确定后在 Cloudflare 控制台只允许正式博客主机。
+
 管理员 bootstrap 是一次性 Worker CLI，不把引导密码加入长期 Worker runtime schema。执行时临时注入：
 
 | 变量 | 作用 | 敏感 |

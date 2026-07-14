@@ -27,7 +27,15 @@ const mediaEnvSchema = z.object({
   MEDIA_MAX_DIMENSION: z.coerce.number().int().min(1).max(16_384),
 });
 
-const webEnvSchema = authEnvSchema.extend(mediaEnvSchema.shape);
+const turnstileEnvSchema = z.object({
+  TURNSTILE_SITE_KEY: z.string().trim().min(3).max(128),
+  TURNSTILE_SECRET_KEY: z.string().min(20).max(256),
+});
+
+const webEnvSchema = authEnvSchema.extend({
+  ...mediaEnvSchema.shape,
+  ...turnstileEnvSchema.shape,
+});
 
 export type WebEnv = RuntimeEnv & z.infer<typeof webEnvSchema>;
 

@@ -22,6 +22,8 @@ const validEnv = {
   R2_FORCE_PATH_STYLE: "true",
   MEDIA_MAX_BYTES: "10485760",
   MEDIA_MAX_DIMENSION: "8192",
+  TURNSTILE_SITE_KEY: "1x00000000000000000000AA",
+  TURNSTILE_SECRET_KEY: "1x0000000000000000000000000000000AA",
 } as const;
 
 describe("getServerEnv", () => {
@@ -49,6 +51,21 @@ describe("getServerEnv", () => {
       MEDIA_MAX_BYTES: 10_485_760,
       MEDIA_MAX_DIMENSION: 8_192,
     });
+  });
+
+  it("parses the public Turnstile site key and server-only secret", () => {
+    expect(getServerEnv(validEnv)).toMatchObject({
+      TURNSTILE_SITE_KEY: "1x00000000000000000000AA",
+      TURNSTILE_SECRET_KEY: "1x0000000000000000000000000000000AA",
+    });
+  });
+
+  it("requires the Turnstile secret without including its value", () => {
+    const secret = "short";
+    expect(() => getServerEnv({ ...validEnv, TURNSTILE_SECRET_KEY: secret })).toThrow(
+      /TURNSTILE_SECRET_KEY/,
+    );
+    expect(() => getServerEnv({ ...validEnv, TURNSTILE_SECRET_KEY: secret })).not.toThrow(secret);
   });
 
   it("requires an R2 secret without including its value in an error", () => {
