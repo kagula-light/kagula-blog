@@ -7,6 +7,10 @@ import { parseWorkerEnv } from "./config/env";
 import { checkReadiness } from "./health/check-readiness";
 import { createHealthServer } from "./health/create-health-server";
 import { createRedisAdapter } from "./redis/create-redis-adapter";
+import {
+  createScheduledPostPublisher,
+  publishScheduledPosts,
+} from "./jobs/publish-scheduled-posts";
 
 async function startWorker(): Promise<void> {
   const env = parseWorkerEnv();
@@ -16,6 +20,7 @@ async function startWorker(): Promise<void> {
   });
   const database = createDatabaseClient(env.DATABASE_URL);
   const redis = createRedisAdapter({ redisUrl: env.REDIS_URL });
+  const scheduledPublisher = createScheduledPostPublisher(database);
 
   const healthServer = createHealthServer({
     port: env.WORKER_HEALTH_PORT,
@@ -36,8 +41,19 @@ async function startWorker(): Promise<void> {
   });
 
   let shutdownPromise: Promise<void> | undefined;
+  const scheduledPublishTimer = setInterval(() => {
+    void publishScheduledPosts(scheduledPublisher)
+      .then((publishedCount) => {
+        if (publishedCount > 0) logger.info({ publishedCount }, "scheduled posts published");
+      })
+      .catch(() => {
+        logger.warn("scheduled post publication failed");
+      });
+  }, 60_000);
+  scheduledPublishTimer.unref();
   const shutdown = (): Promise<void> => {
     shutdownPromise ??= (async () => {
+      clearInterval(scheduledPublishTimer);
       await healthServer.close();
       await redis.close();
       await database.close();
