@@ -49,6 +49,15 @@ jobs:
       SESSION_SECRET: ci_only_session_secret_not_for_production
       SESSION_COOKIE_NAME: kagura_ci_session
       SESSION_TTL_HOURS: 24
+      R2_ENDPOINT: http://127.0.0.1:59000
+      R2_REGION: us-east-1
+      R2_BUCKET: kagura-assets
+      R2_PUBLIC_BASE_URL: http://127.0.0.1:59000/kagura-assets
+      R2_ACCESS_KEY_ID: ci-only-access-key
+      R2_SECRET_ACCESS_KEY: ci-only-secret-key
+      R2_FORCE_PATH_STYLE: true
+      MEDIA_MAX_BYTES: 10485760
+      MEDIA_MAX_DIMENSION: 8192
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

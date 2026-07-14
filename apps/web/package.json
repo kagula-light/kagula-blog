@@ -12,18 +12,20 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "3.1086.0",
     "@kagura/auth": "workspace:*",
     "@kagura/config": "workspace:*",
     "@kagura/contracts": "workspace:*",
     "@kagura/database": "workspace:*",
-    "@types/sanitize-html": "2.16.1",
     "drizzle-orm": "0.45.2",
+    "file-type": "22.0.1",
     "marked": "18.0.6",
     "next": "16.2.10",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "redis": "6.1.0",
     "sanitize-html": "2.17.6",
+    "sharp": "0.34.5",
     "zod": "4.4.3"
   },
   "devDependencies": {
@@ -32,6 +34,7 @@
     "@types/node": "22.20.1",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
+    "@types/sanitize-html": "2.16.1",
     "tailwindcss": "4.3.2",
     "typescript": "6.0.3",
     "vitest": "4.1.10"
