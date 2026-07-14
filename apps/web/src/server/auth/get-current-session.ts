@@ -39,8 +39,8 @@ export async function resolveCurrentSession({
 }
 
 export async function getCurrentSession(): Promise<SessionIdentity | null> {
-  const env = getServerEnv();
   const cookieStore = await cookies();
+  const env = getServerEnv();
   const token = readSessionCookie(cookieStore, env.SESSION_COOKIE_NAME);
   const repository = createAuthRepository(getDatabase());
 
