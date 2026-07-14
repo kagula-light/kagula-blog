@@ -1,4 +1,4 @@
-import { normalizeUsername } from "@kagula/auth/username";
+import { normalizeUsername } from "../../../server/auth/username";
 import { z } from "zod";
 
 export interface RegisterFieldErrors {
