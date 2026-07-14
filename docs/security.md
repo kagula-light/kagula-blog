@@ -142,4 +142,4 @@ CSP 需要为 R2 图片、必要脚本和字体建立最小允许列表。不得
 - 日志扫描不包含常见 Secret 格式。
 - 依赖和容器镜像在 CI 扫描。
 
-阶段 2A 已添加未知用户/错误密码/BANNED 统一结果、限流 key、Cookie 属性、会话撤销、开放重定向和 ADMIN/USER 路由矩阵测试。当前分支的 PostgreSQL/Redis 集成、Chromium 与 Linux 容器结果必须等 GitHub Actions 实际通过后再记录为已验证。
+阶段 2A 已添加未知用户/错误密码/BANNED 统一结果、限流 key、Cookie 属性、会话撤销、开放重定向和 ADMIN/USER 路由矩阵测试。PR #1 已通过 PostgreSQL/Redis 集成、Chromium 与 Linux 容器验证；目标服务器隔离环境仍待验证。
