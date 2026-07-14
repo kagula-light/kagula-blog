@@ -4,10 +4,14 @@ import { describe, expect, it } from "vitest";
 import {
   auditLogs,
   categories,
+  comments,
+  commentStatus,
   credentials,
+  favorites,
   mediaAssets,
   mediaAssetStatus,
   posts,
+  postLikes,
   postRevisions,
   postSlugRedirects,
   postStatus,
@@ -76,6 +80,39 @@ describe("identity schema", () => {
         "createdAt",
       ]),
     );
+  });
+});
+
+describe("interaction schema", () => {
+  it("defines stable comment moderation states", () => {
+    expect(commentStatus.enumValues).toEqual(["PENDING", "APPROVED", "REJECTED", "DELETED"]);
+  });
+
+  it.each([
+    [comments, "comments"],
+    [postLikes, "post_likes"],
+    [favorites, "favorites"],
+  ] as const)("maps an interaction table to %s", (table, expectedName) => {
+    expect(getTableName(table)).toBe(expectedName);
+  });
+
+  it("contains moderation and ownership columns", () => {
+    expect(Object.keys(getTableColumns(comments))).toEqual(
+      expect.arrayContaining([
+        "id",
+        "postId",
+        "authorUserId",
+        "body",
+        "status",
+        "moderatedByUserId",
+        "moderatedAt",
+        "createdAt",
+        "updatedAt",
+        "deletedAt",
+      ]),
+    );
+    expect(Object.keys(getTableColumns(postLikes))).toEqual(["postId", "userId", "createdAt"]);
+    expect(Object.keys(getTableColumns(favorites))).toEqual(["postId", "userId", "createdAt"]);
   });
 });
 

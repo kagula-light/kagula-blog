@@ -12,3 +12,4 @@ export {
   tags,
 } from "./schema/content";
 export { credentials, sessions, userRole, users, userStatus } from "./schema/identity";
+export { commentStatus, comments, favorites, postLikes } from "./schema/interactions";

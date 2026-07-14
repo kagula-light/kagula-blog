@@ -32,7 +32,7 @@ describe("database migrations", () => {
       order by created_at
     `;
 
-    expect(rows).toHaveLength(3);
+    expect(rows).toHaveLength(4);
     expect(rows.every((row) => typeof row.hash === "string" && row.hash.length > 0)).toBe(true);
   });
 });
