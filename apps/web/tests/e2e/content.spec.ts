@@ -17,9 +17,9 @@ test("administrator creates, previews, publishes, and archives a Markdown post",
   const slug = `e2e-content-${Date.now()}`;
 
   await page.getByRole("link", { name: "新建文章" }).click();
-  await page.getByLabel("标题").fill("E2E Content Lifecycle");
+  await page.getByLabel("标题", { exact: true }).fill("E2E Content Lifecycle");
   await page.getByLabel("文章路径").fill(slug);
-  await page.getByLabel("摘要").fill("A browser-verified content lifecycle.");
+  await page.getByLabel("摘要", { exact: true }).fill("A browser-verified content lifecycle.");
   await page.getByLabel("Markdown 正文").fill("# E2E Content\n\n**Published safely.**");
   await page.getByRole("button", { name: "保存草稿" }).click();
 
