@@ -99,6 +99,8 @@ Worker 构建产物已在服务器验证 PostgreSQL 17 迁移、初始就绪、R
 
 ## 阶段 4：用户互动与后台治理
 
+实施计划已创建：`docs/superpowers/plans/2026-07-14-phase-4-interactions-governance.md`。当前尚未开始代码实现。
+
 目标：开放受控的读者互动。
 
 范围：

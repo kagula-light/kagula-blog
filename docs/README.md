@@ -46,6 +46,7 @@
 - [阶段 2A 身份与权限实施计划](superpowers/plans/2026-07-13-phase-2a-identity-permissions-admin-bootstrap.md) 保存身份 schema、会话、权限、管理员 bootstrap 和受保护后台入口的文件级任务。
 - [阶段 2B 内容核心实施计划](superpowers/plans/2026-07-14-phase-2b-content-core.md) 保存文章、修订、媒体、后台发布闭环和定时发布的文件级任务。
 - [阶段 3 公开博客实施计划](superpowers/plans/2026-07-14-phase-3-public-blog.md) 保存原创资产、首页、文章阅读、发现与 SEO 的文件级任务。
+- [阶段 4 互动与治理实施计划](superpowers/plans/2026-07-14-phase-4-interactions-governance.md) 保存注册、账号、点赞、收藏、评论审核和用户治理的文件级任务。
 - 后续阶段在前置契约稳定后各自生成独立计划，不把整个 V1 塞进一份不可维护的总计划。
 
 实施计划必须引用真实文件、实际命令和可验证的完成标准。在脚手架建立前，不得编造不存在的命令或文件。
