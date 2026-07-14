@@ -25,17 +25,17 @@ describe("interaction database constraints", () => {
 
     const [author] = await client<{ id: string }[]>`
       insert into users (username, normalized_username, display_name, role)
-      values (${`interaction_author_${suffix}`}, ${`interaction_author_${suffix}`}, 'Interaction Author', 'ADMIN')
+      values (${`ia_${suffix}`}, ${`ia_${suffix}`}, 'Interaction Author', 'ADMIN')
       returning id
     `;
     const [reader] = await client<{ id: string }[]>`
       insert into users (username, normalized_username, display_name, role)
-      values (${`interaction_reader_${suffix}`}, ${`interaction_reader_${suffix}`}, 'Interaction Reader', 'USER')
+      values (${`ir_${suffix}`}, ${`ir_${suffix}`}, 'Interaction Reader', 'USER')
       returning id
     `;
     const [moderator] = await client<{ id: string }[]>`
       insert into users (username, normalized_username, display_name, role)
-      values (${`interaction_moderator_${suffix}`}, ${`interaction_moderator_${suffix}`}, 'Interaction Moderator', 'ADMIN')
+      values (${`im_${suffix}`}, ${`im_${suffix}`}, 'Interaction Moderator', 'ADMIN')
       returning id
     `;
     const [category] = await client<{ id: string }[]>`
@@ -63,11 +63,11 @@ describe("interaction database constraints", () => {
 
   afterAll(async () => {
     if (!client) return;
-    await client`delete from posts where id = ${postId}`;
-    await client`delete from users where id = ${authorId}`;
-    await client`delete from users where id = ${readerId}`;
-    await client`delete from users where id = ${moderatorId}`;
-    await client`delete from categories where id = ${categoryId}`;
+    if (postId) await client`delete from posts where id = ${postId}`;
+    if (authorId) await client`delete from users where id = ${authorId}`;
+    if (readerId) await client`delete from users where id = ${readerId}`;
+    if (moderatorId) await client`delete from users where id = ${moderatorId}`;
+    if (categoryId) await client`delete from categories where id = ${categoryId}`;
     await client.end({ timeout: 5 });
   });
 
