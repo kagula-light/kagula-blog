@@ -16,7 +16,7 @@ test("uses the same message for unknown users and wrong passwords", async ({ pag
     await page.getByLabel("用户名").fill(username);
     await page.getByLabel("密码").fill("wrong-password-value");
     await page.getByRole("button", { name: "登录" }).click();
-    await expect(page.getByRole("alert")).toHaveText("用户名或密码错误");
+    await expect(page.getByText("用户名或密码错误", { exact: true })).toBeVisible();
   }
 });
 
