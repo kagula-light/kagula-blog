@@ -52,7 +52,7 @@ Worker 构建产物已在服务器验证 PostgreSQL 17 迁移、初始就绪、R
 
 ## 阶段 2：身份、权限与内容核心
 
-状态：阶段 2A 身份与权限已完成代码实现、本地非服务检查和 PR #1 GitHub Actions `quality`/`container-smoke`；目标服务器隔离环境验收待完成。阶段 2B 内容核心尚未开始。
+状态：阶段 2A 身份与权限已完成代码实现、本地非服务检查和 PR #1 GitHub Actions `quality`/`container-smoke`；阶段 2B 内容核心代码已完成，当前分支等待 CI 集成/E2E/容器验收和目标服务器隔离部署。
 
 目标：打通管理员发布文章的最短闭环。
 
@@ -66,7 +66,7 @@ Worker 构建产物已在服务器验证 PostgreSQL 17 迁移、初始就绪、R
 
 阶段 2A 已实现：身份/凭据/会话/审计 schema、Argon2id、HMAC 摘要会话、Redis 登录限流、管理员 bootstrap、登录/退出、服务端 ADMIN/USER 权限、受保护后台壳，以及对应单元/集成/Playwright/smoke 验收代码。
 
-阶段 2B 下一入口：Post、PostRevision、Category、Tag、MediaAsset，Markdown 编辑预览、R2 存储边界、立即/定时发布和归档。
+阶段 2B 已实现：Post、PostRevision、Category、Tag、MediaAsset，Markdown 编辑/清理预览、R2 存储边界、文章管理动作、立即/定时发布、Worker 到期发布、归档和审计。
 
 退出条件：
 

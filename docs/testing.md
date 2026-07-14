@@ -24,7 +24,7 @@ pnpm build
 
 ## 单元测试
 
-当前身份基础已覆盖 50 个 Web 单元测试、15 个 Worker 单元测试和 12 个 `@kagura/auth` 单元测试；其余条目随对应阶段实现。
+当前代码通过 134 个 Web 单元测试、18 个 Worker 单元测试、20 个数据库单元测试、13 个配置单元测试、12 个 `@kagura/auth` 单元测试和 4 个契约单元测试，共 201 个 workspace 单元测试；数据库/R2 集成与 Playwright 由 CI 执行。
 
 覆盖：
 
@@ -49,7 +49,7 @@ pnpm build
 - 评论公开查询只返回已批准记录。
 - 热点批次重复执行。
 - Redis 限流与锁。
-- R2 接口使用本地 S3 兼容服务或明确测试桶。
+- R2 接口使用注入式 SDK 命令测试；真实对象存储集成使用 CI 或隔离环境的 S3 兼容服务。
 
 当前身份集成测试覆盖迁移后 ADMIN/USER 会话解析、单会话撤销、BANNED 即时失效和 Redis 失败预算；只在 CI 或目标服务器隔离测试依赖中运行。
 
@@ -62,7 +62,7 @@ pnpm build
 
 ## Playwright
 
-当前已有 6 条 Chromium 测试：工程基础健康检查、未登录后台重定向、统一登录错误、ADMIN 登录与 HttpOnly/SameSite Cookie、退出后旧 Cookie 失效、USER 后台拒绝。测试 global setup 只在隔离数据库 upsert `e2e_admin`/`e2e_user` 并撤销旧会话，不进入应用 bundle。
+当前已有 7 条 Chromium 测试：工程基础健康检查、未登录后台重定向、统一登录错误、ADMIN 登录与 HttpOnly/SameSite Cookie、退出后旧 Cookie 失效、USER 后台拒绝，以及管理员创建/预览/发布/归档文章。测试 global setup 只在隔离数据库 upsert `e2e_admin`/`e2e_user`、清理其文章并撤销旧会话，不进入应用 bundle。
 
 核心流程：
 

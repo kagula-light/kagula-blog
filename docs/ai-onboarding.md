@@ -14,7 +14,7 @@
 
 如果不存在，项目仍处于文档/计划阶段。不要运行安装命令，不要声称功能已经实现。
 
-当前这些路径均已存在。身份与权限基础代码位于 `packages/auth`、`packages/database`、`apps/web/src/features/auth`、`apps/web/src/server/auth` 和 `apps/web/src/server/permissions`；内容、互动、热点和 Live2D 仍可能只是规划。
+当前这些路径均已存在。身份与权限基础代码位于 `packages/auth`、`packages/database`、`apps/web/src/features/auth`、`apps/web/src/server/auth` 和 `apps/web/src/server/permissions`；内容核心位于 `packages/database/src/schema/content.ts`、`apps/web/src/features/posts`、`apps/web/src/features/media` 和 `apps/worker/src/jobs`；互动、热点和 Live2D 仍可能只是规划。
 
 ## 推荐阅读路径
 
@@ -39,7 +39,7 @@
 | CI/CD | `docs/deployment.md`、`docs/operations.md` |
 | 测试或验收 | `docs/testing.md` |
 
-审计阶段 1 时追加阅读 `docs/superpowers/plans/2026-07-10-phase-1-engineering-foundation.md`；审计身份、登录或权限时读取 `docs/superpowers/plans/2026-07-13-phase-2a-identity-permissions-admin-bootstrap.md`。下一代码入口是阶段 2B 内容核心，不要继续向已完成计划填入新能力。
+审计阶段 1 时追加阅读 `docs/superpowers/plans/2026-07-10-phase-1-engineering-foundation.md`；审计身份、登录或权限时读取阶段 2A 计划；审计文章、媒体或定时发布时读取 `docs/superpowers/plans/2026-07-14-phase-2b-content-core.md`。下一产品阶段是公开站点与原创视觉，不要继续向已完成计划填入新能力。
 
 ## 事实优先级
 
@@ -64,7 +64,7 @@
 - 跨应用契约：`packages/contracts`。
 - 部署与回滚：`infra`。
 
-`apps/web`、`apps/worker`、`packages/auth` 及共享包已存在；认证 `components`、`features/auth`、身份 schema 和管理员 seed 已落地。文章、媒体、评论、互动、热点调度和看板娘模块仍是目标结构。
+`apps/web`、`apps/worker`、`packages/auth` 及共享包已存在；认证、文章、媒体、内容 schema、管理员 seed 和定时发布已落地。评论、互动、热点采集和看板娘模块仍是目标结构。
 
 当前分支关键入口：
 

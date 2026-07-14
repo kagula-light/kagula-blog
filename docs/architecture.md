@@ -1,6 +1,6 @@
 # 系统架构
 
-本文同时描述已实现基础和 V1 目标架构。当前已有 Web、Worker、共享包和阶段 2A 身份/权限模块；文章、互动、热点和 Live2D 目录仍是后续实施目标。
+本文同时描述已实现基础和 V1 目标架构。当前已有 Web、Worker、共享包、阶段 2A 身份/权限和阶段 2B 内容核心；互动、热点和 Live2D 目录仍是后续实施目标。
 
 ## 架构目标
 
@@ -43,7 +43,7 @@ flowchart LR
 
 Web 默认使用 Server Components。欢迎场景、Live2D 看板娘、轮播、Markdown 编辑器、目录抽屉和互动按钮等需要浏览器状态的部分使用 Client Components。
 
-当前认证路径由 Server Actions 调用登录用例，Drizzle repository 持久化摘要会话，Redis 只记录失败预算。`/admin` 布局在服务端解析 Cookie、重新读取用户状态并执行权限策略；当前唯一认证 Client Component 是登录表单。
+当前认证路径由 Server Actions 调用登录用例，Drizzle repository 持久化摘要会话，Redis 只记录失败预算。文章和媒体管理由服务端权限策略、事务 repository 和 Server Actions 组成；`/admin` 布局在服务端解析 Cookie 并重新读取用户状态，只有登录表单、文章编辑器和媒体上传表单是 Client Components。
 
 Live2D 运行时位于独立客户端边界内。服务端先输出静态海报和稳定占位，浏览器在首屏完成后动态导入 `l2d-widget`。模型、纹理、动作和表情从自有 R2 资源域加载；加载失败时保留静态海报，不影响其他页面能力。
 
@@ -58,6 +58,8 @@ Worker 使用与 Web 相同的领域契约，但不依赖 React：
 - 清理过期会话、失败任务和临时上传。
 
 任务必须幂等。重复执行不得产生重复公开热点或重复发布。
+
+当前 Worker 每 60 秒锁定并发布到期文章；状态条件、版本递增、修订和审计写入同一 PostgreSQL 事务，重复执行不会再次发布。
 
 ### PostgreSQL
 

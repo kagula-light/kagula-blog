@@ -6,7 +6,7 @@
 
 ## 当前状态
 
-当前仓库已完成阶段 1 工程基础验收，阶段 2A 身份与权限基础已完成代码实现和 PR #1 CI 验收，正在等待目标服务器隔离环境验收。下一代码入口是阶段 2B 内容核心。
+当前仓库已完成阶段 1 工程基础和阶段 2A 身份权限代码；阶段 2B 内容核心已完成代码实现，正在等待本次分支的 GitHub Actions 集成/E2E/容器验收和目标服务器隔离部署。
 
 - 产品范围、视觉方向、架构、安全边界和部署方式已经确认。
 - 已建立 Node 22.23.1、pnpm 11.11.0 workspace、Next.js Web、独立 Worker、共享配置/契约/数据库包和基线迁移。
@@ -15,9 +15,10 @@
 - 目标服务器上的独立 PostgreSQL 17、Redis 7.4、MinIO 已验证健康；Worker 迁移、就绪失败与恢复路径已通过服务器容器验证。
 - GitHub 仓库已接入；提交 `4939d95` 的 `quality` 与 `container-smoke` 已在 Ubuntu runner 通过，包括迁移、Web/Worker Linux 镜像、Chromium E2E 和容器就绪检查。
 - 已实现 `users`、`credentials`、`sessions`、`audit_logs` 迁移，Argon2id 密码、HMAC 会话摘要、Redis 登录限流、ADMIN/USER 服务端权限和 BANNED 会话失效。
-- Worker 提供幂等管理员 bootstrap 命令；Web 提供 `/login`、幂等退出和受保护 `/admin` 基础壳。后台当前只证明身份与权限，不包含文章、用户、评论或热点管理。
+- Worker 提供幂等管理员 bootstrap 命令和每分钟一次的定时文章发布任务；Web 提供 `/login`、幂等退出、受保护 `/admin`、文章列表/编辑/预览和媒体管理入口。
+- 阶段 2B 已实现文章、修订、分类、标签、媒体元数据、Markdown 清理、R2 适配器、草稿/排期/发布/归档、旧 slug 重定向和管理审计；真实 PostgreSQL/R2/Chromium/容器验收随当前分支 CI 执行。
 - PR #1 的 `quality` 与 `container-smoke` 已通过，包括 PostgreSQL/Redis 集成测试、6 条 Playwright 流程、Linux 镜像、迁移/readiness 和容器 `/admin` 重定向 smoke；目标服务器尚待隔离迁移、seed、登录/退出和共存验证。
-- 内容、互动、热点、最终公开视觉和 Live2D 仍未实现。
+- 用户互动、评论审核、热点、最终公开视觉和 Live2D 仍未实现。
 - 不要将文档中描述的能力当作已经实现的代码。
 
 ## V1 范围

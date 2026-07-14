@@ -63,6 +63,9 @@
 | `R2_SECRET_ACCESS_KEY` | 资源桶 Secret | 是 |
 | `R2_BUCKET` | 公开资源桶名称 | 否 |
 | `R2_PUBLIC_BASE_URL` | 公开资源域名 | 否 |
+| `R2_FORCE_PATH_STYLE` | S3 兼容服务是否使用路径风格；Cloudflare R2 为 `false`，本地 MinIO 为 `true` | 否 |
+| `MEDIA_MAX_BYTES` | 单张图片最大字节数 | 否 |
+| `MEDIA_MAX_DIMENSION` | 图片最大宽或高 | 否 |
 
 备份使用独立凭据：
 
