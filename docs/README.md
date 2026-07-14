@@ -44,11 +44,12 @@
 - `docs/superpowers/specs` 保存已确认设计。
 - [阶段 1 工程基础实施计划](superpowers/plans/2026-07-10-phase-1-engineering-foundation.md) 保存脚手架、健康检查、容器和 CI 的原子任务。
 - [阶段 2A 身份与权限实施计划](superpowers/plans/2026-07-13-phase-2a-identity-permissions-admin-bootstrap.md) 保存身份 schema、会话、权限、管理员 bootstrap 和受保护后台入口的文件级任务。
+- [阶段 2B 内容核心实施计划](superpowers/plans/2026-07-14-phase-2b-content-core.md) 保存文章、修订、媒体、后台发布闭环和定时发布的文件级任务。
 - 后续阶段在前置契约稳定后各自生成独立计划，不把整个 V1 塞进一份不可维护的总计划。
 
 实施计划必须引用真实文件、实际命令和可验证的完成标准。在脚手架建立前，不得编造不存在的命令或文件。
 
-阶段 1 已完成：提交 `4939d95` 的 GitHub Actions `quality` 与 `container-smoke` 已通过。阶段 2A 已完成代码实现、本地非服务检查和 PR #1 CI，仍等待目标服务器隔离环境验收；阶段 2B 文章与媒体计划尚未创建。
+阶段 1 已完成：提交 `4939d95` 的 GitHub Actions `quality` 与 `container-smoke` 已通过。阶段 2A 已完成代码实现、本地非服务检查和 PR #1 CI，仍等待目标服务器隔离环境验收；阶段 2B 文章与媒体计划已创建，代码尚未实施。
 
 ## 文档状态规则
 
