@@ -11,6 +11,9 @@ async function replaceDirectory(source, target) {
 }
 
 await Promise.all([
-  replaceDirectory(resolve(webRoot, ".next", "static"), resolve(standaloneWebRoot, ".next", "static")),
+  replaceDirectory(
+    resolve(webRoot, ".next", "static"),
+    resolve(standaloneWebRoot, ".next", "static"),
+  ),
   replaceDirectory(resolve(webRoot, "public"), resolve(standaloneWebRoot, "public")),
 ]);
