@@ -36,3 +36,16 @@ if (
 ) {
   process.exit(1);
 }
+
+const postsResponse = await fetch("http://web:3000/admin/posts", { redirect: "manual" });
+const postsLoginLocation = postsResponse.headers.get("location");
+console.log(
+  `admin-posts: status=${postsResponse.status} location=${postsLoginLocation ?? "missing"}`,
+);
+if (
+  postsResponse.status !== 307 ||
+  !postsLoginLocation ||
+  new URL(postsLoginLocation, "http://web:3000").pathname !== "/login"
+) {
+  process.exit(1);
+}

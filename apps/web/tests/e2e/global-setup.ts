@@ -1,6 +1,6 @@
 import { hashPassword } from "@kagura/auth/password";
 import { createDatabaseClient } from "@kagura/database/client";
-import { credentials, sessions, users } from "@kagura/database/schema";
+import { credentials, posts, sessions, users } from "@kagura/database/schema";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { inArray } from "drizzle-orm";
 
@@ -54,6 +54,7 @@ export default async function globalSetup(): Promise<void> {
       .update(sessions)
       .set({ revokedAt: new Date() })
       .where(inArray(sessions.userId, seededUserIds));
+    await database.db.delete(posts).where(inArray(posts.createdByUserId, seededUserIds));
   } finally {
     await database.close();
   }

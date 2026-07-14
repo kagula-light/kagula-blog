@@ -9,7 +9,7 @@ import {
   postTags,
   tags,
 } from "@kagura/database/schema";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 
 import type {
   CreatePostPersistenceInput,
@@ -103,8 +103,36 @@ const managedPostSelection = {
 
 export interface PostRepository {
   readonly findPost: (postId: string) => Promise<ManagedPost | null>;
+  readonly findPostEditor: (postId: string) => Promise<PostEditorData | null>;
+  readonly listPosts: (limit?: number) => Promise<readonly PostListItem[]>;
+  readonly listCategories: () => Promise<readonly TaxonomyItem[]>;
+  readonly listTags: () => Promise<readonly TaxonomyItem[]>;
   readonly createPost: (input: CreatePostPersistenceInput) => Promise<ManagedPost>;
   readonly updatePost: (input: UpdatePostPersistenceInput) => Promise<ManagedPost>;
+}
+
+export interface TaxonomyItem {
+  readonly id: string;
+  readonly name: string;
+  readonly slug: string;
+}
+
+export interface PostListItem extends ManagedPost {
+  readonly title: string;
+  readonly excerpt: string;
+  readonly updatedAt: Date;
+}
+
+export interface PostEditorData extends PostListItem {
+  readonly markdown: string;
+  readonly renderedHtml: string;
+  readonly aiSummary: string | null;
+  readonly categoryId: string;
+  readonly tagIds: readonly string[];
+  readonly coverMediaId: string | null;
+  readonly seoTitle: string | null;
+  readonly seoDescription: string | null;
+  readonly socialMediaId: string | null;
 }
 
 export function createPostRepository(database: DatabaseClient): PostRepository {
@@ -117,6 +145,57 @@ export function createPostRepository(database: DatabaseClient): PostRepository {
         .limit(1);
       return post ?? null;
     },
+
+    findPostEditor: async (postId) => {
+      const [post] = await database.db
+        .select({
+          ...managedPostSelection,
+          title: posts.title,
+          excerpt: posts.excerpt,
+          updatedAt: posts.updatedAt,
+          markdown: posts.markdown,
+          renderedHtml: posts.renderedHtml,
+          aiSummary: posts.aiSummary,
+          categoryId: posts.categoryId,
+          coverMediaId: posts.coverMediaId,
+          seoTitle: posts.seoTitle,
+          seoDescription: posts.seoDescription,
+          socialMediaId: posts.socialMediaId,
+        })
+        .from(posts)
+        .where(eq(posts.id, postId))
+        .limit(1);
+      if (!post) return null;
+      const postTagRows = await database.db
+        .select({ tagId: postTags.tagId })
+        .from(postTags)
+        .where(eq(postTags.postId, postId));
+      return { ...post, tagIds: postTagRows.map((row) => row.tagId) };
+    },
+
+    listPosts: async (limit = 100) =>
+      database.db
+        .select({
+          ...managedPostSelection,
+          title: posts.title,
+          excerpt: posts.excerpt,
+          updatedAt: posts.updatedAt,
+        })
+        .from(posts)
+        .orderBy(desc(posts.updatedAt))
+        .limit(Math.min(Math.max(limit, 1), 200)),
+
+    listCategories: async () =>
+      database.db
+        .select({ id: categories.id, name: categories.name, slug: categories.slug })
+        .from(categories)
+        .orderBy(categories.name),
+
+    listTags: async () =>
+      database.db
+        .select({ id: tags.id, name: tags.name, slug: tags.slug })
+        .from(tags)
+        .orderBy(tags.name),
 
     createPost: async (input) =>
       database.db.transaction(async (transaction) => {

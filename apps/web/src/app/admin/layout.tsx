@@ -39,9 +39,9 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
 
       <div className="admin-body">
         <nav className="admin-navigation" aria-label="后台导航">
-          <a href="/admin" aria-current="page">
-            总览
-          </a>
+          <a href="/admin">总览</a>
+          <a href="/admin/posts">文章</a>
+          <a href="/admin/media">媒体</a>
         </nav>
         <main className="admin-main">{children}</main>
       </div>
