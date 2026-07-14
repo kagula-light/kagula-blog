@@ -84,6 +84,13 @@ jobs:
           path: apps/web/test-results/**/*.png
           if-no-files-found: ignore
           retention-days: 5
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failure-results
+          path: apps/web/test-results
+          if-no-files-found: ignore
+          retention-days: 5
 
   container-smoke:
     needs: quality

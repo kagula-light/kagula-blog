@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("renders the engineering foundation and exposes liveness", async ({ page, request }) => {
+test("renders the branded public shell and exposes liveness", async ({ page, request }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "神乐的无月之境" })).toBeVisible();
   await expect(page.locator("main")).toBeVisible();
