@@ -11,6 +11,8 @@ import {
   selectAdjacentPosts,
 } from "../../../features/posts/server/public-post-presenter";
 import { createPublicPostRepository } from "../../../features/posts/server/public-post-repository";
+import { createReactionRepository } from "../../../features/reactions/server/reaction-repository";
+import { getCurrentSession } from "../../../server/auth/get-current-session";
 import { getServerEnv } from "../../../server/config/env";
 import { getDatabase } from "../../../server/database/get-database";
 
@@ -55,8 +57,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   if (resolution.kind === "NOT_FOUND") notFound();
 
   const env = getServerEnv();
-  const posts = await repository.listPublished(100);
   const post = resolution.post;
+  const [posts, session] = await Promise.all([repository.listPublished(100), getCurrentSession()]);
+  const reactions = await createReactionRepository(getDatabase()).getSummary(
+    post.id,
+    session?.id ?? null,
+  );
   const canonicalUrl = new URL(`/articles/${post.slug}`, env.APP_URL).toString();
   const structuredData = {
     "@context": "https://schema.org",
@@ -78,6 +84,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         coverUrl={getPublicPostCoverUrl(post, env.R2_PUBLIC_BASE_URL)}
         outline={extractHeadingOutline(post.renderedHtml)}
         adjacent={selectAdjacentPosts(posts, post.id)}
+        reactions={reactions}
       />
       <script
         type="application/ld+json"

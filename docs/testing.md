@@ -24,7 +24,7 @@ pnpm build
 
 ## 单元测试
 
-当前代码通过 175 个 Web 单元测试、18 个 Worker 单元测试、26 个数据库单元测试、13 个配置单元测试、12 个 `@kagura/auth` 单元测试和 4 个契约单元测试，共 248 个 workspace 单元测试；数据库/R2 集成与 Playwright 由 CI 执行。
+当前代码通过 190 个 Web 单元测试、18 个 Worker 单元测试、26 个数据库单元测试、13 个配置单元测试、12 个 `@kagura/auth` 单元测试和 4 个契约单元测试，共 263 个 workspace 单元测试；数据库/R2 集成与 Playwright 由 CI 执行。
 
 覆盖：
 
@@ -51,7 +51,7 @@ pnpm build
 - Redis 限流与锁。
 - R2 接口使用注入式 SDK 命令测试；真实对象存储集成使用 CI 或隔离环境的 S3 兼容服务。
 
-当前身份与账号集成测试覆盖迁移后 ADMIN/USER 会话解析、单会话撤销、BANNED 即时失效、Redis 失败预算、注册事务，以及收藏/评论账号活动查询；只在 CI 或目标服务器隔离测试依赖中运行。
+当前身份、账号与互动集成测试覆盖迁移后 ADMIN/USER 会话解析、单会话撤销、BANNED 即时失效、Redis 失败预算、注册事务、收藏/评论账号活动查询，以及点赞/收藏重复与并发唯一冲突；只在 CI 或目标服务器隔离测试依赖中运行。
 
 ## 热点适配器
 
@@ -62,7 +62,7 @@ pnpm build
 
 ## Playwright
 
-当前已定义 13 条 Chromium 测试：健康检查、未登录后台重定向、统一登录错误、ADMIN 登录与 HttpOnly/SameSite Cookie、退出后旧 Cookie 失效、USER 后台拒绝、管理员文章生命周期、注册后账号页，以及欢迎场景会话、公开文章/搜索、草稿隔离、移动端溢出和减少动画。测试 global setup 只在隔离数据库 upsert `e2e_admin`/`e2e_user`、清理其文章、撤销旧会话并创建固定公开/草稿文章，不进入应用 bundle。注册流程使用 Cloudflare 官方测试键，新增流程需以当前分支 GitHub Actions 结果为准。
+当前已定义 14 条 Chromium 测试：健康检查、未登录后台重定向、统一登录错误、ADMIN 登录与 HttpOnly/SameSite Cookie、退出后旧 Cookie 失效、USER 后台拒绝、管理员文章生命周期、注册后账号页、点赞/收藏跨页面持久化，以及欢迎场景会话、公开文章/搜索、草稿隔离、移动端溢出和减少动画。测试 global setup 只在隔离数据库 upsert `e2e_admin`/`e2e_user`、清理其文章、撤销旧会话并创建固定公开/草稿文章，不进入应用 bundle。注册流程使用 Cloudflare 官方测试键，新增流程需以当前分支 GitHub Actions 结果为准。
 
 核心流程：
 

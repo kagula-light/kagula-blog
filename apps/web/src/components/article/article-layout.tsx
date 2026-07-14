@@ -5,16 +5,25 @@ import type { HeadingOutlineItem } from "../../features/posts/server/markdown";
 import { formatPublicDate } from "../../features/posts/server/public-post-presenter";
 import type { AdjacentPosts } from "../../features/posts/server/public-post-presenter";
 import type { PublicPostDetail } from "../../features/posts/server/public-post-repository";
+import type { ReactionSummary } from "../../features/reactions/server/reaction-repository";
 import { ArticleToc } from "./article-toc";
+import { PostActions } from "./post-actions";
 
 interface ArticleLayoutProps {
   readonly post: PublicPostDetail;
   readonly coverUrl: string;
   readonly outline: readonly HeadingOutlineItem[];
   readonly adjacent: AdjacentPosts;
+  readonly reactions: ReactionSummary;
 }
 
-export function ArticleLayout({ post, coverUrl, outline, adjacent }: ArticleLayoutProps) {
+export function ArticleLayout({
+  post,
+  coverUrl,
+  outline,
+  adjacent,
+  reactions,
+}: ArticleLayoutProps) {
   return (
     <main id="main-content" className="article-page" tabIndex={-1}>
       <nav className="article-breadcrumb" aria-label="面包屑">
@@ -71,6 +80,11 @@ export function ArticleLayout({ post, coverUrl, outline, adjacent }: ArticleLayo
               ) : null}
               <p>除特别说明外，本站原创内容采用 CC BY-NC-SA 4.0 许可。</p>
             </footer>
+            <PostActions
+              postId={post.id}
+              initialSummary={reactions}
+              loginHref={`/login?next=${encodeURIComponent(`/articles/${post.slug}`)}`}
+            />
             <nav className="article-adjacent" aria-label="相邻文章">
               <div>
                 <span>上一篇</span>

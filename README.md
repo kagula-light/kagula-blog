@@ -20,7 +20,8 @@
 - PR #1 的 `quality` 与 `container-smoke` 已通过；运行 `29310663015` 包括 PostgreSQL/Redis 集成测试、7 条 Playwright 流程、Linux 镜像、迁移/readiness 和容器 `/admin` 重定向 smoke。
 - 提交 `517fa62` 的 GitHub Actions 运行 `29319590161` 已通过公开首页、文章详情、分类、标签、归档、搜索、RSS、Sitemap、robots、标题锚点、响应式目录和 Linux 容器验收。
 - 当前分支已新增用户名密码注册、Turnstile、注册限流、安全会话、受保护账号页和收藏/评论活动查询；本地格式、Lint、类型、248 个单元测试和生产构建通过，新增 PostgreSQL/Chromium 流程仍待本次提交的 GitHub Actions。
-- 当前品牌位图是原创程序化星空/漂浮书页回退，不含角色；最终原创角色、Live2D、点赞/收藏操作、评论提交审核、用户治理和真实热点仍未实现。
+- 当前分支已新增事务化点赞/收藏、文章计数与账号收藏持久化；PostgreSQL 并发和 Chromium 生命周期仍待本次提交的 GitHub Actions。
+- 当前品牌位图是原创程序化星空/漂浮书页回退，不含角色；最终原创角色、Live2D、评论提交审核、用户治理和真实热点仍未实现。
 - 不要将文档中描述的能力当作已经实现的代码。
 
 ## V1 范围

@@ -78,7 +78,11 @@ export default async function AccountPage() {
                 {activity.favorites.map((favorite) => (
                   <li key={favorite.postId}>
                     <div>
-                      <Link href={`/articles/${favorite.slug}`}>{favorite.title}</Link>
+                      {favorite.postStatus === "PUBLISHED" ? (
+                        <Link href={`/articles/${favorite.slug}`}>{favorite.title}</Link>
+                      ) : (
+                        <span className="account-item-title">{favorite.title}</span>
+                      )}
                       <span>{postStatusLabels[favorite.postStatus]}</span>
                     </div>
                     <time dateTime={favorite.createdAt.toISOString()}>
