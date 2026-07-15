@@ -1,26 +1,44 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const modelUrl = "https://assets.playwright.invalid/models/e2e-missing.model3.json";
+const modelRoute = "**/models/e2e-missing.model3.json";
 const preferenceKey = "kagura-mascot-preference-v1";
 const welcomeSessionKey = "kagura-welcome-seen";
 
 interface FailedModelHarness {
   readonly pageErrors: Array<string>;
+  readonly requestUrls: Array<string>;
   readonly requestCount: () => number;
 }
 
 async function installFailedModelHarness(page: Page): Promise<FailedModelHarness> {
   let requests = 0;
   const pageErrors: Array<string> = [];
+  const requestUrls: Array<string> = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));
-  await page.route(modelUrl, async (route) => {
+  await page.route(modelRoute, async (route) => {
     requests += 1;
+    requestUrls.push(route.request().url());
     await route.fulfill({ status: 404, contentType: "application/json", body: "{}" });
   });
   await page.addInitScript(({ key }) => window.sessionStorage.setItem(key, "1"), {
     key: welcomeSessionKey,
   });
-  return { pageErrors, requestCount: () => requests };
+  return { pageErrors, requestUrls, requestCount: () => requests };
+}
+
+async function expectModelRequests(
+  page: Page,
+  harness: FailedModelHarness,
+  expected: number,
+): Promise<void> {
+  await expect
+    .poll(async () => ({
+      requestCount: harness.requestCount(),
+      requestUrls: harness.requestUrls,
+      state: await page.locator(".mascot-client").getAttribute("data-state"),
+      runtimeHosts: await page.locator(".kagura-mascot-runtime-host").count(),
+    }))
+    .toMatchObject({ requestCount: expected });
 }
 
 test("falls back to the poster after one automatic desktop attempt", async ({ page }, testInfo) => {
@@ -29,7 +47,7 @@ test("falls back to the poster after one automatic desktop attempt", async ({ pa
 
   await page.goto("/");
   await expect(page.getByRole("search")).toBeVisible();
-  await expect.poll(harness.requestCount).toBe(1);
+  await expectModelRequests(page, harness, 1);
   await expect(page.locator('.mascot-client[data-state="ERROR"]')).toBeVisible({ timeout: 8_000 });
   await expect(page.locator(".mascot-poster")).toBeVisible();
   expect(harness.requestCount()).toBe(1);
@@ -40,14 +58,14 @@ test("falls back to the poster after one automatic desktop attempt", async ({ pa
     fullPage: true,
   });
   await page.getByRole("button", { name: "重试加载看板娘" }).click();
-  await expect.poll(harness.requestCount).toBe(2);
+  await expectModelRequests(page, harness, 2);
 });
 
 test("persists close preference and reopens only on command", async ({ page }) => {
   const harness = await installFailedModelHarness(page);
 
   await page.goto("/");
-  await expect.poll(harness.requestCount).toBe(1);
+  await expectModelRequests(page, harness, 1);
   await page.getByRole("button", { name: "关闭看板娘" }).click();
   await expect(page.getByRole("button", { name: "重新唤醒神乐静无月" })).toBeVisible();
   await expect
@@ -60,7 +78,7 @@ test("persists close preference and reopens only on command", async ({ page }) =
   expect(harness.requestCount()).toBe(1);
 
   await page.getByRole("button", { name: "重新唤醒神乐静无月" }).click();
-  await expect.poll(harness.requestCount).toBe(2);
+  await expectModelRequests(page, harness, 2);
   expect(harness.pageErrors).toEqual([]);
 });
 
@@ -82,7 +100,7 @@ test("keeps mobile model-free until explicit start", async ({ page }, testInfo) 
   });
 
   await launcher.click();
-  await expect.poll(harness.requestCount).toBe(1);
+  await expectModelRequests(page, harness, 1);
   expect(harness.pageErrors).toEqual([]);
 });
 
@@ -98,6 +116,6 @@ test("keeps reduced-motion desktop model-free until explicit start", async ({ pa
   expect(harness.requestCount()).toBe(0);
 
   await launcher.click();
-  await expect.poll(harness.requestCount).toBe(1);
+  await expectModelRequests(page, harness, 1);
   expect(harness.pageErrors).toEqual([]);
 });

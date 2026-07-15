@@ -499,6 +499,7 @@ button {
 .post-editor,
 .admin-preview {
   width: 100%;
+  min-width: 0;
 }
 
 .admin-page-heading,
@@ -537,6 +538,9 @@ button {
 }
 
 .admin-table-wrap {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   overflow-x: auto;
   border: 1px solid #303034;
   border-radius: 6px;
