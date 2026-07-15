@@ -50,6 +50,9 @@ export default defineConfig({
       MEDIA_MAX_DIMENSION: "8192",
       TURNSTILE_SITE_KEY: "1x00000000000000000000AA",
       TURNSTILE_SECRET_KEY: "1x0000000000000000000000000000000AA",
+      MASCOT_ENABLED: "true",
+      MASCOT_MODEL_PATH: "models/e2e-missing.model3.json",
+      MASCOT_POSTER_PATH: "/brand/kagura-avatar.webp",
     },
   },
 });

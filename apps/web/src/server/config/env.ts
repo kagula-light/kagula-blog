@@ -32,9 +32,22 @@ const turnstileEnvSchema = z.object({
   TURNSTILE_SECRET_KEY: z.string().min(20).max(256),
 });
 
+const mascotEnvSchema = z.object({
+  MASCOT_ENABLED: z
+    .enum(["true", "false"])
+    .default("false")
+    .transform((value) => value === "true"),
+  MASCOT_MODEL_PATH: z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.string().trim().min(1).max(512).optional(),
+  ),
+  MASCOT_POSTER_PATH: z.string().trim().min(1).max(512).default("/brand/kagura-avatar.webp"),
+});
+
 const webEnvSchema = authEnvSchema.extend({
   ...mediaEnvSchema.shape,
   ...turnstileEnvSchema.shape,
+  ...mascotEnvSchema.shape,
 });
 
 export type WebEnv = RuntimeEnv & z.infer<typeof webEnvSchema>;

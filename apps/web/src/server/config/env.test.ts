@@ -60,6 +60,33 @@ describe("getServerEnv", () => {
     });
   });
 
+  it("defaults the optional mascot off without requiring a model", () => {
+    expect(getServerEnv(validEnv)).toMatchObject({
+      MASCOT_ENABLED: false,
+      MASCOT_POSTER_PATH: "/brand/kagura-avatar.webp",
+    });
+    expect(getServerEnv(validEnv).MASCOT_MODEL_PATH).toBeUndefined();
+  });
+
+  it("parses an enabled mascot with a relative model path", () => {
+    expect(
+      getServerEnv({
+        ...validEnv,
+        MASCOT_ENABLED: "true",
+        MASCOT_MODEL_PATH: "models/kagura/model3.json",
+        MASCOT_POSTER_PATH: "/brand/kagura-avatar.webp",
+      }),
+    ).toMatchObject({
+      MASCOT_ENABLED: true,
+      MASCOT_MODEL_PATH: "models/kagura/model3.json",
+      MASCOT_POSTER_PATH: "/brand/kagura-avatar.webp",
+    });
+  });
+
+  it.each(["1", "yes", "TRUE", ""])("rejects ambiguous mascot flag %j", (value) => {
+    expect(() => getServerEnv({ ...validEnv, MASCOT_ENABLED: value })).toThrow(/MASCOT_ENABLED/);
+  });
+
   it("requires the Turnstile secret without including its value", () => {
     const secret = "short";
     expect(() => getServerEnv({ ...validEnv, TURNSTILE_SECRET_KEY: secret })).toThrow(

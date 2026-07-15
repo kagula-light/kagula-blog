@@ -51,6 +51,8 @@ services:
       MEDIA_MAX_DIMENSION: 8192
       TURNSTILE_SITE_KEY: 1x00000000000000000000AA
       TURNSTILE_SECRET_KEY: 1x0000000000000000000000000000000AA
+      MASCOT_ENABLED: "false"
+      MASCOT_POSTER_PATH: /brand/kagura-avatar.webp
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_healthy }
