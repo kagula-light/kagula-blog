@@ -7,11 +7,15 @@
     "./health": {
       "types": "./src/health.ts",
       "default": "./src/health.ts"
+    },
+    "./hotspots": {
+      "types": "./src/hotspots.ts",
+      "default": "./src/hotspots.ts"
     }
   },
   "scripts": {
-    "build": "tsup src/health.ts --format esm --dts --out-dir dist",
-    "dev": "tsup src/health.ts --format esm --watch --out-dir dist",
+    "build": "tsup src/health.ts src/hotspots.ts --format esm --dts --out-dir dist",
+    "dev": "tsup src/health.ts src/hotspots.ts --format esm --watch --out-dir dist",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
