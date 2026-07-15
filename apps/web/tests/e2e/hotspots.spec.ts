@@ -1,4 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
+import { createDatabaseClient } from "@kagula/database/client";
+import { hotspotCandidates } from "@kagula/database/schema";
+import { eq } from "drizzle-orm";
 
 import { e2eIdentities } from "./identities";
 
@@ -10,6 +13,31 @@ async function loginAsAdministrator(page: Page): Promise<void> {
   await page.getByLabel("密码").fill(e2eIdentities.admin.password);
   await page.getByRole("button", { name: "登录" }).click();
   await expect(page).toHaveURL(/\/admin\/hotspots$/);
+}
+
+async function resetPendingCandidate(): Promise<void> {
+  const databaseUrl = process.env.TEST_DATABASE_URL;
+  if (!databaseUrl) throw new Error("TEST_DATABASE_URL is required for hotspot E2E setup");
+
+  const database = createDatabaseClient(databaseUrl);
+  try {
+    const [candidate] = await database.db
+      .update(hotspotCandidates)
+      .set({
+        displayTitle: "E2E 待审核热点",
+        status: "PENDING",
+        publicOrder: null,
+        reviewedByUserId: null,
+        reviewedAt: null,
+        expiresAt: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(hotspotCandidates.externalId, "e2e-hotspot-pending"))
+      .returning({ id: hotspotCandidates.id });
+    if (!candidate) throw new Error("Playwright pending hotspot candidate was not found");
+  } finally {
+    await database.close();
+  }
 }
 
 test("keeps pending and source-health internals off public hotspot pages", async ({
@@ -47,6 +75,7 @@ test("keeps pending and source-health internals off public hotspot pages", async
 });
 
 test("administrator approves a pending candidate and publishes it", async ({ page }, testInfo) => {
+  await resetPendingCandidate();
   await loginAsAdministrator(page);
   const pendingRow = page.getByRole("row", { name: /E2E 待审核热点/ });
   await expect(pendingRow).toBeVisible();
