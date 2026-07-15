@@ -46,7 +46,7 @@ export function MascotClient({ children, enabled, modelUrl }: MascotClientProps)
   }
 
   return (
-    <div className="mascot-client" data-state={state}>
+    <div className="mascot-client" data-state={state} data-has-model={hasModel}>
       <div className="mascot-poster" aria-hidden={state === "ACTIVE"}>
         {children}
       </div>
@@ -55,7 +55,13 @@ export function MascotClient({ children, enabled, modelUrl }: MascotClientProps)
       </span>
       <div className="mascot-controls" aria-label="看板娘控制">
         {state === "POSTER" && hasModel ? (
-          <button type="button" aria-label="唤醒神乐静无月" title="唤醒神乐静无月" onClick={start}>
+          <button
+            className="mascot-start-button"
+            type="button"
+            aria-label="唤醒神乐静无月"
+            title="唤醒神乐静无月"
+            onClick={start}
+          >
             &#x25B6;
           </button>
         ) : null}

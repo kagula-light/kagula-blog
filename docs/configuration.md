@@ -8,17 +8,16 @@
 | --- | --- | --- |
 | `NODE_ENV` | 运行模式 | 否 |
 | `APP_URL` | 站点公开基础地址 | 否 |
-| `ASSET_BASE_URL` | R2 公开资源基础地址 | 否 |
 | `APP_TIMEZONE` | 业务时区，生产为 `Asia/Shanghai` | 否 |
 | `LOG_LEVEL` | 结构化日志级别 | 否 |
 | `APP_RELEASE` | Git 提交 SHA 或发布标识 | 否 |
 | `MASCOT_ENABLED` | 是否向公开站点提供看板娘入口 | 否 |
-| `MASCOT_MODEL_PATH` | 相对 `ASSET_BASE_URL` 的模型清单路径 | 否 |
-| `MASCOT_POSTER_PATH` | 相对 `ASSET_BASE_URL` 的静态回退图路径 | 否 |
+| `MASCOT_MODEL_PATH` | 相对 `R2_PUBLIC_BASE_URL` 的模型清单路径 | 否 |
+| `MASCOT_POSTER_PATH` | 同源静态回退图路径，默认 `/brand/kagura-avatar.webp` | 否 |
 
 域名不在 V1 编码阶段固定。部署时设置 `APP_URL`，之后再配置 DNS 和 HTTPS。
 
-看板娘路径只能是受控资源根下的相对路径，不能由浏览器或后台提交任意远程 URL。`MASCOT_ENABLED=false` 时不渲染入口；启用但模型无效时服务仍可启动，只显示静态回退并记录非敏感诊断信息。
+`MASCOT_ENABLED` 只接受 `true` 或 `false`，默认 `false`。模型路径只能是 `R2_PUBLIC_BASE_URL` 下的安全相对路径，拒绝协议、绝对路径、反斜杠和路径穿越；海报必须是以 `/` 开头的同源路径。`MASCOT_ENABLED=false` 时不渲染入口；启用但没有模型路径时只显示静态回退，模型加载失败时也回到海报且不自动重试。
 
 ## 数据库与 Redis
 
