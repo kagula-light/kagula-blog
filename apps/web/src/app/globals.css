@@ -822,7 +822,7 @@ button {
 
 .admin-hotspot-actions {
   display: flex;
-  min-width: 30rem;
+  min-width: 0;
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
@@ -831,6 +831,7 @@ button {
 .admin-hotspot-public-form {
   display: grid;
   flex: 1;
+  min-width: 0;
   grid-template-columns: minmax(12rem, 1fr) 4.5rem auto;
   gap: 0.5rem;
 }
@@ -1242,6 +1243,16 @@ button {
   .admin-filter-compact {
     grid-template-columns: 1fr;
     align-items: stretch;
+  }
+
+  .admin-hotspot-filter,
+  .admin-hotspot-public-form {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-hotspot-actions {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .post-editor-toolbar {
