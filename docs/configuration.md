@@ -103,6 +103,17 @@ Web 运行凭据不应具有读取数据库备份的权限。
 
 应用运行 Secret 保存在服务器受限环境文件中，不通过 Docker 镜像构建参数写入镜像。
 
+## 生产 Compose 环境文件
+
+服务器 `/opt/kagura-blog/.env` 至少包含：
+
+- `WEB_IMAGE` 与 `WORKER_IMAGE`，通常为 `ghcr.io/kagula-light/kagura-blog-web:sha-<sha>` 和 `ghcr.io/kagula-light/kagura-blog-worker:sha-<sha>`。
+- `WEB_BIND`，无域名预览可临时使用 `0.0.0.0:3080`；正式环境应由宝塔 Nginx 代理到本机端口。
+- `POSTGRES_DB`、`POSTGRES_USER`、`POSTGRES_PASSWORD`。
+- Web、Worker、认证、Turnstile、R2、看板娘和热点变量。
+
+无域名 HTTP 预览时，`APP_URL` 可临时设为 loopback 地址以通过生产安全校验；正式上线必须改为 HTTPS 域名，并重新验证登录、注册、媒体上传和 SEO 输出。
+
 ## 校验规则
 
 - 缺少必需变量时服务直接启动失败。

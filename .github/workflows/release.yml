@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+      - codex/phase-2-auth-content-core
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Deploy the built images to the configured production server"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  WEB_IMAGE: ghcr.io/${{ github.repository_owner }}/kagura-blog-web
+  WORKER_IMAGE: ghcr.io/${{ github.repository_owner }}/kagura-blog-worker
+  IMAGE_TAG: sha-${{ github.sha }}
+
+jobs:
+  publish-images:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/docker/web.Dockerfile
+          push: true
+          tags: ${{ env.WEB_IMAGE }}:${{ env.IMAGE_TAG }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/docker/worker.Dockerfile
+          push: true
+          tags: ${{ env.WORKER_IMAGE }}:${{ env.IMAGE_TAG }}
+
+  deploy:
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy == 'true'
+    needs: publish-images
+    runs-on: ubuntu-24.04
+    environment: production
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install SSH key
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "${{ secrets.DEPLOY_PORT }}" "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Upload deployment files
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "${{ secrets.DEPLOY_PORT }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" 'mkdir -p /opt/kagura-blog'
+          scp -i ~/.ssh/deploy_key -P "${{ secrets.DEPLOY_PORT }}" infra/docker/compose.prod.yml "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/kagura-blog/compose.yml"
+          scp -i ~/.ssh/deploy_key -P "${{ secrets.DEPLOY_PORT }}" infra/scripts/deploy-production.sh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/kagura-blog/deploy-production.sh"
+          scp -i ~/.ssh/deploy_key -P "${{ secrets.DEPLOY_PORT }}" infra/scripts/rollback-production.sh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/kagura-blog/rollback-production.sh"
+          scp -i ~/.ssh/deploy_key -P "${{ secrets.DEPLOY_PORT }}" infra/scripts/backup-postgres.sh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/kagura-blog/backup-postgres.sh"
+
+      - name: Deploy
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "${{ secrets.DEPLOY_PORT }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" 'chmod +x /opt/kagura-blog/*.sh && /opt/kagura-blog/deploy-production.sh "${{ github.sha }}"'

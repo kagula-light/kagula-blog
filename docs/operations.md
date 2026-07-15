@@ -41,6 +41,8 @@ R2 或某个热点来源暂时失败不应让公开博客退出就绪。
 - 每晚执行一致性导出。
 - 导出压缩并加密后上传独立 R2 备份桶。
 - 上传成功并校验哈希后才删除本地临时文件。
+- 每次部署前，`deploy-production.sh` 会在 `/opt/kagura-blog/backups/` 写入一次 `predeploy-<sha>-<time>.sql.gz` 本地备份。
+- `backup-postgres.sh` 可手动创建 `manual-<time>.sql.gz` 本地备份。
 
 保留策略：
 
@@ -110,7 +112,7 @@ R2 或某个热点来源暂时失败不应让公开博客退出就绪。
 
 1. 检查 Nginx、容器状态和就绪接口。
 2. 检查最近部署 SHA。
-3. 如果与部署相关，回滚前一成功 SHA。
+3. 如果与部署相关，执行 `/opt/kagura-blog/rollback-production.sh` 回滚前一成功 SHA。
 4. 如果数据库不可用，停止重复重启并保护数据。
 
 ### 数据库异常

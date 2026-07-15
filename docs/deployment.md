@@ -33,6 +33,13 @@ blog Compose project
 
 当前 `.github/workflows/ci.yml` 只有 `quality` 和依赖它的 `container-smoke` 两个任务，权限仅为 `contents: read`。它不会连接服务器、推送镜像或读取部署 Secret。
 
+`.github/workflows/release.yml` 负责发布镜像到 GHCR：
+
+- `publish-images` 在 `main` 和当前实施分支推送时构建 Web 与 Worker 镜像。
+- 镜像标签固定为 `sha-<git sha>`，不使用 `latest` 部署。
+- `deploy` 只在 `workflow_dispatch` 且输入 `deploy=true` 时执行，并要求 GitHub `production` Environment 提供 SSH Secret。
+- 没有生产 Secret 时，普通 push 只发布镜像，不连接服务器。
+
 ### Pull Request
 
 1. 安装锁定依赖。
@@ -48,14 +55,14 @@ blog Compose project
 
 1. 重复必需质量门禁。
 2. 构建多阶段 Web 与 Worker 镜像。
-3. 使用提交 SHA 标记镜像。
+3. 使用 `sha-<git sha>` 标记镜像。
 4. 推送 GHCR。
 5. 通过 GitHub Production Environment 连接部署用户。
-6. 上传或写入只含版本标识的部署清单。
-7. 拉取新镜像。
-8. 运行一次性迁移。
-9. 启动新版本。
-10. 轮询就绪检查。
+6. 上传生产 Compose 和脚本。
+7. 服务器只拉取镜像，不构建源码。
+8. 部署脚本先备份数据库，再运行一次性迁移。
+9. 启动 Web 与 Worker。
+10. 轮询 Web/Worker 就绪检查。
 11. 成功后记录当前 SHA；失败则恢复前一 SHA。
 
 ## 部署用户
@@ -72,11 +79,13 @@ blog Compose project
 
 ~~~text
 /opt/kagura-blog/
-  compose.yml
+  compose.yml        # 来自 infra/docker/compose.prod.yml
   .env
-  releases/
   state/
   backups/
+  deploy-production.sh
+  rollback-production.sh
+  backup-postgres.sh
 ~~~
 
 环境文件权限仅允许部署用户和必要系统账户读取。
@@ -110,7 +119,7 @@ blog Compose project
 - Redis 配置最大内存和淘汰策略。
 - 构建永远不在服务器执行。
 
-具体限制在上线前依据 `docker stats` 和压测结果写入 Compose。
+生产 Compose 已设置初始资源边界：Web 768 MiB、Worker 384 MiB、PostgreSQL 512 MiB、Redis 192 MiB。上线后依据 `docker stats` 和真实流量调整。
 
 ## 回滚
 
@@ -125,10 +134,12 @@ blog Compose project
 1. 轮换已暴露的 root 密码。
 2. 创建部署用户和 SSH Key。
 3. 备份当前服务器配置和现有 Compose 状态。
-4. 部署博客内部服务，不接公网。
+4. 部署博客内部服务；无域名阶段可先暴露临时 IP 端口做公开页预览。
 5. 执行迁移和种子管理员创建。
 6. 验证健康检查与核心流程。
 7. 配置宝塔 Nginx 和 HTTPS。
 8. 配置域名与 R2 资源域名。
 9. 验证自动部署和回滚。
 10. 在用户授权下逐步完成 SSH、防火墙和 Fail2ban 加固。
+
+无域名临时预览不等同正式生产：生产登录 Cookie、Turnstile、R2 公开资源域名和 SEO Canonical 都应在正式域名与 HTTPS 配置后再验收。
