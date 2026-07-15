@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { HotspotList } from "../../components/hotspot/hotspot-list";
 import { SiteFooter } from "../../components/site/site-footer";
 import { SiteHeader } from "../../components/site/site-header";
 import { site } from "../../data/site";
+import { createHotspotRepository } from "../../features/hotspots/server/hotspot-repository";
+import { getDatabase } from "../../server/database/get-database";
 
 export const metadata: Metadata = { title: `每日热点 | ${site.name}` };
+export const dynamic = "force-dynamic";
 
-export default function HotspotsPage() {
+export default async function HotspotsPage() {
+  const now = new Date();
+  const items = await createHotspotRepository(getDatabase()).listCurrentPublic(now);
+
   return (
     <>
       <SiteHeader current="hotspots" />
@@ -18,15 +25,16 @@ export default function HotspotsPage() {
           <span>每日热点</span>
         </nav>
         <header className="discovery-header">
-          <h1>每日热点</h1>
-          <p>
-            自动采集、人工审核、按北京时间归档。审核流水线完成前，这里不会展示未经确认的第三方榜单。
+          <p className="hotspot-page-date">
+            {new Intl.DateTimeFormat("zh-CN", {
+              timeZone: "Asia/Shanghai",
+              dateStyle: "long",
+            }).format(now)}
           </p>
+          <h1>每日热点</h1>
+          <p>从五个公开来源带回线索，只展示经过人工审核且仍在有效期内的条目。</p>
         </header>
-        <div className="public-empty-state">
-          <strong>热榜正在接入</strong>
-          <p>来源适配器和后台审核完成后，公开结果会出现在这里。</p>
-        </div>
+        <HotspotList items={items} />
       </main>
       <SiteFooter year={new Date().getUTCFullYear()} />
     </>

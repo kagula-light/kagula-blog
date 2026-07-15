@@ -1,5 +1,9 @@
+import Link from "next/link";
+
+import { HotspotList } from "../components/hotspot/hotspot-list";
 import { createPublicPostRepository } from "../features/posts/server/public-post-repository";
 import { getPublicPostCoverUrl } from "../features/posts/server/public-post-presenter";
+import { createHotspotRepository } from "../features/hotspots/server/hotspot-repository";
 import { getServerEnv } from "../server/config/env";
 import { getDatabase } from "../server/database/get-database";
 import { FeaturedPost } from "../components/site/featured-post";
@@ -7,7 +11,6 @@ import { PostStream, type PostStreamItem } from "../components/site/post-stream"
 import { SiteFooter } from "../components/site/site-footer";
 import { SiteHeader } from "../components/site/site-header";
 import { WelcomeScene } from "../components/site/welcome-scene";
-import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -22,8 +25,11 @@ function postStreamItem(
 }
 
 export default async function HomePage() {
-  const repository = createPublicPostRepository(getDatabase());
-  const posts = await repository.listPublished(16);
+  const database = getDatabase();
+  const [posts, hotspotItems] = await Promise.all([
+    createPublicPostRepository(database).listPublished(16),
+    createHotspotRepository(database).listCurrentPublic(new Date()),
+  ]);
   const publicAssetBaseUrl = getServerEnv().R2_PUBLIC_BASE_URL;
   const [featured, ...recent] = posts;
   const categories = [
@@ -92,12 +98,14 @@ export default async function HomePage() {
         ) : null}
 
         <section className="hotspot-passage" aria-labelledby="hotspot-title">
-          <div>
-            <p>每日热点</p>
-            <h2 id="hotspot-title">把喧闹留在门外，只带回值得读的线索</h2>
+          <div className="hotspot-passage-heading">
+            <div>
+              <p>每日热点</p>
+              <h2 id="hotspot-title">把喧闹留在门外，只带回值得读的线索</h2>
+            </div>
+            <Link href="/hotspots">查看完整热榜</Link>
           </div>
-          <p>热点候选将经过自动采集与人工审核后公开。功能上线前，这里不会展示未经核验的榜单。</p>
-          <Link href="/hotspots">前往热榜</Link>
+          <HotspotList items={hotspotItems.slice(0, 5)} variant="preview" />
         </section>
       </main>
       <SiteFooter year={new Date().getUTCFullYear()} />
