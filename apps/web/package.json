@@ -19,6 +19,7 @@
     "@kagura/database": "workspace:*",
     "drizzle-orm": "0.45.2",
     "file-type": "22.0.1",
+    "l2d-widget": "0.1.0",
     "marked": "18.0.6",
     "next": "16.2.10",
     "react": "19.2.7",
