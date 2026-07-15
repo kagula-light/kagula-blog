@@ -4,6 +4,15 @@ import { categories, credentials, posts, sessions, users } from "@kagura/databas
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { inArray } from "drizzle-orm";
 
+import {
+  auditLogs,
+  dailyHotspotArchiveItems,
+  dailyHotspotArchives,
+  hotspotCandidates,
+  hotspotSources,
+} from "@kagula/database/schema";
+import { and, eq } from "drizzle-orm";
+
 import { e2eIdentities } from "./identities";
 
 export default async function globalSetup(): Promise<void> {
@@ -102,14 +111,6 @@ export default async function globalSetup(): Promise<void> {
       },
     ]);
 
-    const {
-      auditLogs,
-      dailyHotspotArchiveItems,
-      dailyHotspotArchives,
-      hotspotCandidates,
-      hotspotSources,
-    } = await import("@kagula/database/schema");
-    const { and, eq } = await import("drizzle-orm");
     const [hotspotSource] = await database.db
       .select({ id: hotspotSources.id })
       .from(hotspotSources)
