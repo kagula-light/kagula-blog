@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import postgres from "postgres";
 
@@ -5,6 +7,23 @@ import { runMigrations } from "../src/migrate";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
 let client: ReturnType<typeof postgres> | undefined;
+
+async function getExpectedMigrationCount(): Promise<number> {
+  const journalText = await readFile(
+    new URL("../drizzle/meta/_journal.json", import.meta.url),
+    "utf8",
+  );
+  const journal: unknown = JSON.parse(journalText);
+  if (
+    typeof journal !== "object" ||
+    journal === null ||
+    !("entries" in journal) ||
+    !Array.isArray(journal.entries)
+  ) {
+    throw new Error("Drizzle migration journal has an invalid shape");
+  }
+  return journal.entries.length;
+}
 
 describe("database migrations", () => {
   beforeAll(async () => {
@@ -32,7 +51,8 @@ describe("database migrations", () => {
       order by created_at
     `;
 
-    expect(rows).toHaveLength(4);
+    expect(rows).toHaveLength(await getExpectedMigrationCount());
     expect(rows.every((row) => typeof row.hash === "string" && row.hash.length > 0)).toBe(true);
+    expect(new Set(rows.map((row) => row.hash)).size).toBe(rows.length);
   });
 });
