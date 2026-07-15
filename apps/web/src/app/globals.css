@@ -1255,6 +1255,23 @@ button {
     flex-direction: column;
   }
 
+  .admin-hotspot-table {
+    min-width: 100%;
+    table-layout: fixed;
+  }
+
+  .admin-hotspot-table th,
+  .admin-hotspot-table td {
+    padding-inline: 0.625rem;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-source-health,
+  .admin-source-error {
+    max-width: 100%;
+    white-space: normal;
+  }
+
   .post-editor-toolbar {
     position: static;
     margin-inline: 0;

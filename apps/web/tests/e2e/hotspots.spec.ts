@@ -113,6 +113,6 @@ test("administrator approves a pending candidate and publishes it", async ({ pag
         right: element.getBoundingClientRect().right,
       })),
   }));
-  expect(overflow).toMatchObject({ fits: true });
+  expect(overflow.fits, JSON.stringify(overflow.offenders, null, 2)).toBe(true);
   await page.screenshot({ path: testInfo.outputPath("hotspots-admin-mobile.png"), fullPage: true });
 });
