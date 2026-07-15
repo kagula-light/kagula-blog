@@ -5,6 +5,7 @@ import { ArticleLayout } from "../../../components/article/article-layout";
 import { SiteFooter } from "../../../components/site/site-footer";
 import { SiteHeader } from "../../../components/site/site-header";
 import { site } from "../../../data/site";
+import { createCommentRepository } from "../../../features/comments/server/comment-repository";
 import { extractHeadingOutline } from "../../../features/posts/server/markdown";
 import {
   getPublicPostCoverUrl,
@@ -59,10 +60,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const env = getServerEnv();
   const post = resolution.post;
   const [posts, session] = await Promise.all([repository.listPublished(100), getCurrentSession()]);
-  const reactions = await createReactionRepository(getDatabase()).getSummary(
-    post.id,
-    session?.id ?? null,
-  );
+  const [reactions, comments] = await Promise.all([
+    createReactionRepository(getDatabase()).getSummary(post.id, session?.id ?? null),
+    createCommentRepository(getDatabase()).listApproved(post.id),
+  ]);
   const canonicalUrl = new URL(`/articles/${post.slug}`, env.APP_URL).toString();
   const structuredData = {
     "@context": "https://schema.org",
@@ -85,6 +86,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         outline={extractHeadingOutline(post.renderedHtml)}
         adjacent={selectAdjacentPosts(posts, post.id)}
         reactions={reactions}
+        comments={comments}
       />
       <script
         type="application/ld+json"

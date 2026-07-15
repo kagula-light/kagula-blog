@@ -1,6 +1,6 @@
 # 系统架构
 
-本文同时描述已实现基础和 V1 目标架构。当前已有 Web、Worker、共享包、身份/权限、内容核心和阶段 3 公开查询/路由；互动、真实热点和 Live2D 目录仍是后续实施目标。
+本文同时描述已实现基础和 V1 目标架构。当前已有 Web、Worker、共享包、身份/权限、内容核心、公开查询/路由和阶段 4 互动治理；真实热点和 Live2D 仍是后续实施目标。
 
 ## 架构目标
 
@@ -43,7 +43,7 @@ flowchart LR
 
 Web 默认使用 Server Components。欢迎场景、Live2D 看板娘、轮播、Markdown 编辑器、目录抽屉和互动按钮等需要浏览器状态的部分使用 Client Components。
 
-当前认证路径由 Server Actions 调用登录用例，Drizzle repository 持久化摘要会话，Redis 只记录失败预算。文章和媒体管理由服务端权限策略、事务 repository 和 Server Actions 组成；`/admin` 布局在服务端解析 Cookie 并重新读取用户状态，只有登录表单、文章编辑器和媒体上传表单是 Client Components。
+当前认证路径由 Server Actions 调用登录用例，Drizzle repository 持久化摘要会话，Redis 只记录失败预算。文章、媒体、评论与用户治理由服务端权限策略、事务 repository 和 Server Actions 组成；`/admin` 布局在服务端解析 Cookie 并重新读取用户状态，客户端表单只提交经过约束的命令。
 
 公开站点通过独立 public post repository 读取 `PUBLISHED` 且具有发布时间的文章；首页、文章、分类、标签、搜索、归档、RSS 和 Sitemap 共用这一边界。欢迎场景是聚焦的 Client Component，正文、目录和发现页保持 Server Component 或原生 HTML 交互。
 
@@ -175,6 +175,14 @@ infra/
 3. 评论以 `PENDING` 保存。
 4. 管理员审核为 `APPROVED` 或 `REJECTED`。
 5. 只有 `APPROVED` 评论进入公开查询。
+6. 审核状态、审核人、时间和审计日志在同一事务中写入。
+
+### 治理用户
+
+1. 管理员在 `/admin/users` 查询普通用户并提交目标状态。
+2. Server Action 解析当前会话，事务仓储再次读取管理员与目标用户状态。
+3. 禁言、封禁或恢复通过状态机校验后更新；管理员账号不能由此入口修改。
+4. 封禁与所有有效会话撤销、审计记录在同一事务中完成。
 
 ### 采集热点
 

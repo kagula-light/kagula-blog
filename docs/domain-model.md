@@ -188,7 +188,7 @@ stateDiagram-v2
 - 时间、请求关联 ID 和有限的变化摘要。
 - 发布、审核、角色、用户状态和站点设置变更。
 
-当前已写入的动作是 `ADMIN_BOOTSTRAPPED` 与 `ADMIN_CREDENTIAL_ROTATED`；其余动作随对应业务模块实现。
+当前已写入的动作包括 `ADMIN_BOOTSTRAPPED`、`ADMIN_CREDENTIAL_ROTATED`、文章与媒体生命周期动作，以及 `USER_MUTED`、`USER_BANNED`、`USER_REACTIVATED`、`COMMENT_APPROVED`、`COMMENT_REJECTED` 和 `COMMENT_DELETED`。
 
 审计日志不可通过普通后台编辑或删除。
 

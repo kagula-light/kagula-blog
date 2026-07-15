@@ -42,6 +42,8 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
           <a href="/admin">总览</a>
           <a href="/admin/posts">文章</a>
           <a href="/admin/media">媒体</a>
+          <a href="/admin/comments">评论</a>
+          <a href="/admin/users">用户</a>
         </nav>
         <main className="admin-main">{children}</main>
       </div>

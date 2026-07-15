@@ -1,12 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import type { ApprovedComment } from "../../features/comments/server/comment-repository";
 import type { HeadingOutlineItem } from "../../features/posts/server/markdown";
 import { formatPublicDate } from "../../features/posts/server/public-post-presenter";
 import type { AdjacentPosts } from "../../features/posts/server/public-post-presenter";
 import type { PublicPostDetail } from "../../features/posts/server/public-post-repository";
 import type { ReactionSummary } from "../../features/reactions/server/reaction-repository";
 import { ArticleToc } from "./article-toc";
+import { CommentForm } from "./comment-form";
+import { CommentList } from "./comment-list";
 import { PostActions } from "./post-actions";
 
 interface ArticleLayoutProps {
@@ -15,6 +18,7 @@ interface ArticleLayoutProps {
   readonly outline: readonly HeadingOutlineItem[];
   readonly adjacent: AdjacentPosts;
   readonly reactions: ReactionSummary;
+  readonly comments: readonly ApprovedComment[];
 }
 
 export function ArticleLayout({
@@ -23,6 +27,7 @@ export function ArticleLayout({
   outline,
   adjacent,
   reactions,
+  comments,
 }: ArticleLayoutProps) {
   return (
     <main id="main-content" className="article-page" tabIndex={-1}>
@@ -85,6 +90,17 @@ export function ArticleLayout({
               initialSummary={reactions}
               loginHref={`/login?next=${encodeURIComponent(`/articles/${post.slug}`)}`}
             />
+            <section className="article-comments" aria-labelledby="article-comments-title">
+              <div className="article-comments-heading">
+                <h2 id="article-comments-title">评论</h2>
+                <span>{comments.length}</span>
+              </div>
+              <CommentForm
+                postId={post.id}
+                loginHref={`/login?next=${encodeURIComponent(`/articles/${post.slug}#article-comments-title`)}`}
+              />
+              <CommentList comments={comments} />
+            </section>
             <nav className="article-adjacent" aria-label="相邻文章">
               <div>
                 <span>上一篇</span>

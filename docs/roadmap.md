@@ -99,7 +99,7 @@ Worker 构建产物已在服务器验证 PostgreSQL 17 迁移、初始就绪、R
 
 ## 阶段 4：用户互动与后台治理
 
-实施计划已创建：`docs/superpowers/plans/2026-07-14-phase-4-interactions-governance.md`。互动表结构、注册服务、Turnstile/限流边界、注册/账号页和幂等点赞收藏已进入当前分支；评论审核和用户治理仍待实现。
+状态：当前分支已完成互动表结构、注册服务、Turnstile/限流边界、注册/账号页、幂等点赞收藏、评论先审后发、评论审核和用户治理代码；Node 22 静态检查、单元测试和生产构建通过，PostgreSQL、Chromium 与 Linux 容器验收等待当前提交的 GitHub Actions。
 
 目标：开放受控的读者互动。
 

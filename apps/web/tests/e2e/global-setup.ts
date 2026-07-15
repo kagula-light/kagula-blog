@@ -25,7 +25,7 @@ export default async function globalSetup(): Promise<void> {
           normalizedUsername: identity.username,
           displayName: identity.displayName,
           role: identity.role,
-          status: "ACTIVE",
+          status: identity.status,
         })
         .onConflictDoUpdate({
           target: users.normalizedUsername,
@@ -33,7 +33,7 @@ export default async function globalSetup(): Promise<void> {
             username: identity.username,
             displayName: identity.displayName,
             role: identity.role,
-            status: "ACTIVE",
+            status: identity.status,
             updatedAt: now,
           },
         })
