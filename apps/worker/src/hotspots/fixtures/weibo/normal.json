@@ -1,0 +1,14 @@
+{
+  "ok": 1,
+  "data": {
+    "realtime": [
+      {
+        "word": "人工智能新进展",
+        "word_scheme": "#人工智能新进展#",
+        "raw_hot": 987654,
+        "category": "科技"
+      },
+      { "word": "开源社区", "word_scheme": "#开源社区#", "raw_hot": 456789, "category": "社会" }
+    ]
+  }
+}

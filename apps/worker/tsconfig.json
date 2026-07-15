@@ -1,4 +1,13 @@
 {
   "extends": "../../packages/config/typescript/node.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@kagula/auth/*": ["../../packages/auth/src/*.ts"],
+      "@kagula/config/*": ["../../packages/config/src/*.ts"],
+      "@kagula/contracts/*": ["../../packages/contracts/src/*.ts"],
+      "@kagula/database/*": ["../../packages/database/src/*.ts"]
+    }
+  },
   "include": ["src/**/*.ts", "tsup.config.ts", "vitest.config.ts"]
 }

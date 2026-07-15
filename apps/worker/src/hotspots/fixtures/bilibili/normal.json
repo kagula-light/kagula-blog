@@ -1,0 +1,14 @@
+{
+  "code": 0,
+  "data": {
+    "list": [
+      {
+        "bvid": "BV1example",
+        "title": "AI 工具的工程实践",
+        "tname": "科技",
+        "stat": { "view": 880000 }
+      },
+      { "bvid": "BV1second", "title": "编译器入门", "tname": "知识", "stat": { "view": 420000 } }
+    ]
+  }
+}
