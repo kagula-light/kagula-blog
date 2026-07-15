@@ -101,6 +101,117 @@ export default async function globalSetup(): Promise<void> {
         updatedAt: now,
       },
     ]);
+
+    const {
+      auditLogs,
+      dailyHotspotArchiveItems,
+      dailyHotspotArchives,
+      hotspotCandidates,
+      hotspotSources,
+    } = await import("@kagula/database/schema");
+    const { and, eq } = await import("drizzle-orm");
+    const [hotspotSource] = await database.db
+      .select({ id: hotspotSources.id })
+      .from(hotspotSources)
+      .where(eq(hotspotSources.code, "GITHUB_TRENDING"))
+      .limit(1);
+    if (!hotspotSource) throw new Error("Playwright hotspot source was not found");
+
+    const hotspotExternalIds = ["e2e-hotspot-approved", "e2e-hotspot-pending"];
+    const oldHotspots = await database.db
+      .select({ id: hotspotCandidates.id })
+      .from(hotspotCandidates)
+      .where(inArray(hotspotCandidates.externalId, hotspotExternalIds));
+    if (oldHotspots.length > 0) {
+      const ids = oldHotspots.map((candidate) => candidate.id);
+      await database.db
+        .delete(auditLogs)
+        .where(
+          and(eq(auditLogs.resourceType, "HOTSPOT_CANDIDATE"), inArray(auditLogs.resourceId, ids)),
+        );
+      await database.db.delete(hotspotCandidates).where(inArray(hotspotCandidates.id, ids));
+    }
+    await database.db
+      .update(hotspotSources)
+      .set({
+        enabled: true,
+        lastAttemptAt: now,
+        lastFailureAt: now,
+        lastError: "E2E source unavailable",
+        consecutiveFailures: 2,
+        updatedAt: now,
+      })
+      .where(eq(hotspotSources.id, hotspotSource.id));
+    await database.db.insert(hotspotCandidates).values([
+      {
+        sourceId: hotspotSource.id,
+        externalId: hotspotExternalIds[0],
+        originalTitle: "E2E 已公开热点",
+        displayTitle: "E2E 已公开热点",
+        originalUrl: "https://github.com/kagula-light/kagula-blog",
+        normalizedUrl: "https://github.com/kagula-light/kagula-blog",
+        sourceRank: 1,
+        sourceScore: 100,
+        sourceCategory: "TypeScript",
+        dedupeKey: "e2e-hotspot-approved".padEnd(64, "a"),
+        rawFingerprint: "a".repeat(64),
+        status: "APPROVED",
+        publicOrder: 1,
+        capturedAt: now,
+        reviewedByUserId: administratorId,
+        reviewedAt: now,
+        expiresAt: new Date("2099-01-01T00:00:00.000Z"),
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        sourceId: hotspotSource.id,
+        externalId: hotspotExternalIds[1],
+        originalTitle: "E2E 待审核热点",
+        displayTitle: "E2E 待审核热点",
+        originalUrl: "https://github.com/kagula-light/kagula-blog/pulls",
+        normalizedUrl: "https://github.com/kagula-light/kagula-blog/pulls",
+        sourceRank: 2,
+        sourceScore: 80,
+        sourceCategory: "TypeScript",
+        dedupeKey: "e2e-hotspot-pending".padEnd(64, "b"),
+        rawFingerprint: "b".repeat(64),
+        status: "PENDING",
+        capturedAt: now,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ]);
+
+    const archiveDate = "2097-01-02";
+    const [archive] = await database.db
+      .insert(dailyHotspotArchives)
+      .values({ archiveDate, itemCount: 1 })
+      .onConflictDoNothing({ target: dailyHotspotArchives.archiveDate })
+      .returning({ id: dailyHotspotArchives.id });
+    const archiveId =
+      archive?.id ??
+      (
+        await database.db
+          .select({ id: dailyHotspotArchives.id })
+          .from(dailyHotspotArchives)
+          .where(eq(dailyHotspotArchives.archiveDate, archiveDate))
+          .limit(1)
+      )[0]?.id;
+    if (!archiveId) throw new Error("Playwright hotspot archive was not created");
+    await database.db
+      .insert(dailyHotspotArchiveItems)
+      .values({
+        archiveId,
+        position: 1,
+        sourceCode: "GITHUB_TRENDING",
+        sourceName: "GitHub Trending",
+        title: "E2E 归档热点",
+        url: "https://github.com/kagula-light/kagula-blog/releases",
+        sourceRank: 1,
+        capturedAt: now,
+      })
+      .onConflictDoNothing();
   } finally {
     await database.close();
   }

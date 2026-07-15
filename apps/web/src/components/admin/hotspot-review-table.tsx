@@ -56,10 +56,17 @@ export function HotspotReviewTable({ candidates }: HotspotReviewTableProps) {
 
   if (candidates.length === 0) {
     return (
-      <div className="admin-empty-state">
-        <strong>当前队列为空</strong>
-        <p>这个筛选条件下没有热点候选。</p>
-      </div>
+      <>
+        {state.message ? (
+          <p className="admin-action-message" role={state.status === "ERROR" ? "alert" : "status"}>
+            {state.message}
+          </p>
+        ) : null}
+        <div className="admin-empty-state">
+          <strong>当前队列为空</strong>
+          <p>这个筛选条件下没有热点候选。</p>
+        </div>
+      </>
     );
   }
 
