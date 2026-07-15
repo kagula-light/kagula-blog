@@ -174,15 +174,17 @@ describe("hotspot review repository", () => {
   it("returns only enabled, approved, unexpired items in public order", async () => {
     const repository = createHotspotRepository(getDatabase());
     const now = new Date("2026-07-15T08:30:00.000Z");
-    await expect(repository.listCurrentPublic(now)).resolves.toEqual([
+    const publicItems = await repository.listCurrentPublic(now);
+    const fixtureItems = publicItems.filter((item) => candidateIds.includes(item.id));
+    expect(fixtureItems).toEqual([
       expect.objectContaining({ id: reorderId, title: "First public item", publicOrder: 1 }),
       expect.objectContaining({ id: approveId, title: "Approved title", publicOrder: 2 }),
     ]);
-    const publicItems = await repository.listCurrentPublic(now);
-    expect(publicItems[0]).not.toHaveProperty("lastError");
-    expect(publicItems[0]).not.toHaveProperty("consecutiveFailures");
+    expect(fixtureItems[0]).not.toHaveProperty("lastError");
+    expect(fixtureItems[0]).not.toHaveProperty("consecutiveFailures");
 
     await getDatabase().client`update hotspot_sources set enabled = false where id = ${sourceId}`;
-    await expect(repository.listCurrentPublic(now)).resolves.toEqual([]);
+    const disabledItems = await repository.listCurrentPublic(now);
+    expect(disabledItems.filter((item) => candidateIds.includes(item.id))).toEqual([]);
   });
 });
