@@ -2,6 +2,7 @@
 set -eu
 
 APP_DIR="${KAGURA_APP_DIR:-/opt/kagura-blog}"
+PROJECT="${KAGURA_COMPOSE_PROJECT:-kagura-blog-prod}"
 COMPOSE_FILE="${APP_DIR}/compose.yml"
 ENV_FILE="${APP_DIR}/.env"
 STATE_DIR="${APP_DIR}/state"
@@ -36,29 +37,29 @@ rollback() {
     APP_RELEASE="$PREVIOUS_RELEASE" \
       WEB_IMAGE="ghcr.io/kagula-light/kagura-blog-web:sha-${PREVIOUS_RELEASE}" \
       WORKER_IMAGE="ghcr.io/kagula-light/kagura-blog-worker:sha-${PREVIOUS_RELEASE}" \
-      docker compose -p kagura-blog -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d web worker
+      docker compose -p "$PROJECT" -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d web worker
   fi
 }
 trap rollback ERR
 
-docker compose -p kagura-blog -f "$COMPOSE_FILE" --env-file "$ENV_FILE" pull postgres redis web worker
-docker compose -p kagura-blog -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d postgres redis
+docker compose -p "$PROJECT" -f "$COMPOSE_FILE" --env-file "$ENV_FILE" pull postgres redis web worker
+docker compose -p "$PROJECT" -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d postgres redis
 
-if docker compose -p kagura-blog -f "$COMPOSE_FILE" --env-file "$ENV_FILE" ps postgres >/dev/null 2>&1; then
-  if docker compose -p kagura-blog -f "$COMPOSE_FILE" --env-file "$ENV_FILE" exec -T postgres sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"' >/dev/null 2>&1; then
+if docker compose -p "$PROJECT" -f "$COMPOSE_FILE" --env-file "$ENV_FILE" ps postgres >/dev/null 2>&1; then
+  if docker compose -p "$PROJECT" -f "$COMPOSE_FILE" --env-file "$ENV_FILE" exec -T postgres sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"' >/dev/null 2>&1; then
     backup_name="${BACKUP_DIR}/predeploy-${RELEASE}-$(date -u +%Y%m%dT%H%M%SZ).sql.gz"
-    docker compose -p kagura-blog -f "$COMPOSE_FILE" --env-file "$ENV_FILE" exec -T postgres sh -c 'pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB"' | gzip -c > "$backup_name"
+    docker compose -p "$PROJECT" -f "$COMPOSE_FILE" --env-file "$ENV_FILE" exec -T postgres sh -c 'pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB"' | gzip -c > "$backup_name"
     echo "wrote backup ${backup_name}"
   fi
 fi
 
-docker compose -p kagura-blog -f "$COMPOSE_FILE" --env-file "$ENV_FILE" run --rm migrate
-docker compose -p kagura-blog -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d web worker
+docker compose -p "$PROJECT" -f "$COMPOSE_FILE" --env-file "$ENV_FILE" run --rm migrate
+docker compose -p "$PROJECT" -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d web worker
 
 deadline=$(($(date +%s) + 90))
 while [ "$(date +%s)" -lt "$deadline" ]; do
-  web_ready="$(docker compose -p kagura-blog -f "$COMPOSE_FILE" --env-file "$ENV_FILE" exec -T web node -e "fetch('http://127.0.0.1:3000/api/health/ready').then(async r=>{const b=await r.json(); process.exit(r.ok && b.status==='ok' && b.service==='web' ? 0 : 1)}).catch(()=>process.exit(1))" >/dev/null 2>&1 && echo ok || echo no)"
-  worker_ready="$(docker compose -p kagura-blog -f "$COMPOSE_FILE" --env-file "$ENV_FILE" exec -T worker node -e "fetch('http://127.0.0.1:3001/health/ready').then(async r=>{const b=await r.json(); process.exit(r.ok && b.status==='ok' && b.service==='worker' ? 0 : 1)}).catch(()=>process.exit(1))" >/dev/null 2>&1 && echo ok || echo no)"
+  web_ready="$(docker compose -p "$PROJECT" -f "$COMPOSE_FILE" --env-file "$ENV_FILE" exec -T web node -e "fetch('http://127.0.0.1:3000/api/health/ready').then(async r=>{const b=await r.json(); process.exit(r.ok && b.status==='ok' && b.service==='web' ? 0 : 1)}).catch(()=>process.exit(1))" >/dev/null 2>&1 && echo ok || echo no)"
+  worker_ready="$(docker compose -p "$PROJECT" -f "$COMPOSE_FILE" --env-file "$ENV_FILE" exec -T worker node -e "fetch('http://127.0.0.1:3001/health/ready').then(async r=>{const b=await r.json(); process.exit(r.ok && b.status==='ok' && b.service==='worker' ? 0 : 1)}).catch(()=>process.exit(1))" >/dev/null 2>&1 && echo ok || echo no)"
   if [ "$web_ready" = "ok" ] && [ "$worker_ready" = "ok" ]; then
     echo "$RELEASE" > "${STATE_DIR}/current-release"
     echo "$PREVIOUS_RELEASE" > "${STATE_DIR}/previous-release"

@@ -18,10 +18,10 @@ Internet
      -> blog-web 内部端口
 
 blog Compose project
-  blog-web
-  blog-worker
-  blog-postgres
-  blog-redis
+  kagura-blog-prod-web
+  kagura-blog-prod-worker
+  kagura-blog-prod-postgres
+  kagura-blog-prod-redis
   migrate 一次性任务
 ~~~
 
@@ -119,7 +119,7 @@ blog Compose project
 - Redis 配置最大内存和淘汰策略。
 - 构建永远不在服务器执行。
 
-生产 Compose 已设置初始资源边界：Web 768 MiB、Worker 384 MiB、PostgreSQL 512 MiB、Redis 192 MiB。上线后依据 `docker stats` 和真实流量调整。
+生产 Compose 使用 `kagura-blog-prod` 项目、网络、卷和容器名前缀，避免与服务器上已有的 `kagura-blog-dev` 验证容器冲突。它已设置初始资源边界：Web 768 MiB、Worker 384 MiB、PostgreSQL 512 MiB、Redis 192 MiB。上线后依据 `docker stats` 和真实流量调整。
 
 ## 回滚
 

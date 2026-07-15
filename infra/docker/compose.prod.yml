@@ -1,9 +1,9 @@
-name: kagura-blog
+name: kagura-blog-prod
 
 services:
   postgres:
     image: postgres:17-alpine
-    container_name: kagura-blog-postgres
+    container_name: kagura-blog-prod-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-kagura_blog}
@@ -16,7 +16,7 @@ services:
       interval: 10s
       timeout: 3s
       retries: 12
-    networks: [kagura-blog]
+    networks: [kagura-blog-prod]
     mem_limit: 512m
     logging: &json-logs
       driver: json-file
@@ -26,7 +26,7 @@ services:
 
   redis:
     image: redis:7.4-alpine
-    container_name: kagura-blog-redis
+    container_name: kagura-blog-prod-redis
     restart: unless-stopped
     command:
       [
@@ -45,13 +45,13 @@ services:
       interval: 10s
       timeout: 3s
       retries: 12
-    networks: [kagura-blog]
+    networks: [kagura-blog-prod]
     mem_limit: 192m
     logging: *json-logs
 
   migrate:
     image: ${WORKER_IMAGE:?WORKER_IMAGE is required}
-    container_name: kagura-blog-migrate
+    container_name: kagura-blog-prod-migrate
     command: ["node", "dist/migrate.js"]
     env_file: .env
     environment:
@@ -59,12 +59,12 @@ services:
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_healthy }
-    networks: [kagura-blog]
+    networks: [kagura-blog-prod]
     logging: *json-logs
 
   web:
     image: ${WEB_IMAGE:?WEB_IMAGE is required}
-    container_name: kagura-blog-web
+    container_name: kagura-blog-prod-web
     restart: unless-stopped
     env_file: .env
     ports:
@@ -82,13 +82,13 @@ services:
       interval: 10s
       timeout: 3s
       retries: 12
-    networks: [kagura-blog]
+    networks: [kagura-blog-prod]
     mem_limit: 768m
     logging: *json-logs
 
   worker:
     image: ${WORKER_IMAGE:?WORKER_IMAGE is required}
-    container_name: kagura-blog-worker
+    container_name: kagura-blog-prod-worker
     restart: unless-stopped
     env_file: .env
     environment:
@@ -106,14 +106,14 @@ services:
       interval: 10s
       timeout: 3s
       retries: 12
-    networks: [kagura-blog]
+    networks: [kagura-blog-prod]
     mem_limit: 384m
     logging: *json-logs
 
 volumes:
   postgres-data:
-    name: kagura-blog-postgres-data
+    name: kagura-blog-prod-postgres-data
 
 networks:
-  kagura-blog:
-    name: kagura-blog
+  kagura-blog-prod:
+    name: kagura-blog-prod

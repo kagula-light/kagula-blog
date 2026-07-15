@@ -2,6 +2,7 @@
 set -eu
 
 APP_DIR="${KAGURA_APP_DIR:-/opt/kagura-blog}"
+PROJECT="${KAGURA_COMPOSE_PROJECT:-kagura-blog-prod}"
 COMPOSE_FILE="${APP_DIR}/compose.yml"
 ENV_FILE="${APP_DIR}/.env"
 STATE_DIR="${APP_DIR}/state"
@@ -25,7 +26,7 @@ export APP_RELEASE="$TARGET_RELEASE"
 export WEB_IMAGE="ghcr.io/kagula-light/kagura-blog-web:sha-${TARGET_RELEASE}"
 export WORKER_IMAGE="ghcr.io/kagula-light/kagura-blog-worker:sha-${TARGET_RELEASE}"
 
-docker compose -p kagura-blog -f "$COMPOSE_FILE" --env-file "$ENV_FILE" pull web worker
-docker compose -p kagura-blog -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d web worker
+docker compose -p "$PROJECT" -f "$COMPOSE_FILE" --env-file "$ENV_FILE" pull web worker
+docker compose -p "$PROJECT" -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d web worker
 echo "$TARGET_RELEASE" > "${STATE_DIR}/current-release"
 echo "rolled back to ${TARGET_RELEASE}"
