@@ -24,7 +24,7 @@ pnpm build
 
 ## 单元测试
 
-当前代码通过 297 个 Web 单元测试、65 个 Worker 单元测试、34 个数据库单元测试、13 个配置单元测试、12 个 `@kagula/auth` 单元测试和 16 个契约单元测试，共 437 个 workspace 单元测试；PostgreSQL/Redis 集成与 Playwright 由 CI 执行。
+当前代码通过 344 个 Web 单元测试、65 个 Worker 单元测试、34 个数据库单元测试、13 个配置单元测试、12 个 `@kagula/auth` 单元测试和 16 个契约单元测试，共 484 个 workspace 单元测试；PostgreSQL/Redis 集成与 Playwright 由 CI 执行。
 
 <!-- 旧基线统计，保留供历史对照：
 
@@ -68,7 +68,7 @@ pnpm build
 
 ## Playwright
 
-当前已定义 18 条 Chromium 测试：健康检查、认证/权限、管理员文章生命周期、注册后账号页、点赞/收藏、评论与用户治理、欢迎场景、公开文章/搜索、草稿隔离、移动端溢出、减少动画，以及热点隐藏/批准/公开/归档和桌面移动截图。global setup 只在隔离数据库 upsert 专用身份、固定文章和热点/归档样本，不进入应用 bundle；注册流程使用 Cloudflare 官方测试键。
+当前已定义 22 条 Chromium 测试：健康检查、认证/权限、管理员文章生命周期、注册后账号页、点赞/收藏、评论与用户治理、欢迎场景、公开文章/搜索、草稿隔离、移动端溢出、减少动画、看板娘静态回退/关闭偏好/移动端显式启动/减少动画显式启动，以及热点隐藏/批准/公开/归档和桌面移动截图。global setup 只在隔离数据库 upsert 专用身份、固定文章和热点/归档样本，不进入应用 bundle；注册流程使用 Cloudflare 官方测试键。
 
 核心流程：
 
@@ -155,7 +155,7 @@ GitHub Actions 工作流 `CI` 包含两个顺序门禁：
 - `quality`：格式、Lint、类型、单元/集成测试、构建和 Playwright。
 - `container-smoke`：仅在 `quality` 成功后构建隔离镜像并验证 Web/Worker 就绪。
 
-阶段 2A 的 PR #1 已通过上述两个门禁；运行 `29299762599` 覆盖 PostgreSQL/Redis 集成、6 条 Chromium 流程和 Linux 容器 smoke。该结果不代表目标服务器已经部署或完成隔离运行验收。
+PR #1 当前分支提交 `fe18e4e` 已通过上述两个门禁；运行 `29403953560` 覆盖 PostgreSQL/Redis 集成、22 条 Chromium 流程、看板娘失败回退与偏好流程，以及 Linux 容器 smoke。该结果不代表目标服务器已经部署或完成隔离运行验收。
 
 `pnpm containers:smoke` 会先等待 PostgreSQL、Redis、迁移、Web 和 Worker 全部成功，再单独运行验证容器。除 readiness 外，当前还验证未登录 `/admin` 返回带 `next=/admin` 的登录重定向；smoke 不创建管理员。任何启动或验证失败都会返回非零，并在清理 Compose 项目前写入 `container-smoke.log` 供 CI 上传。
 
