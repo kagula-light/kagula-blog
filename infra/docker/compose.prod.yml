@@ -55,6 +55,7 @@ services:
     command: ["node", "dist/migrate.js"]
     env_file: .env
     environment:
+      APP_RELEASE: ${APP_RELEASE:?APP_RELEASE is required}
       MIGRATIONS_DIR: /app/drizzle
     depends_on:
       postgres: { condition: service_healthy }
@@ -67,6 +68,8 @@ services:
     container_name: kagura-blog-prod-web
     restart: unless-stopped
     env_file: .env
+    environment:
+      APP_RELEASE: ${APP_RELEASE:?APP_RELEASE is required}
     ports:
       - "${WEB_BIND:-0.0.0.0:3080}:3000"
     depends_on:
@@ -92,6 +95,7 @@ services:
     restart: unless-stopped
     env_file: .env
     environment:
+      APP_RELEASE: ${APP_RELEASE:?APP_RELEASE is required}
       WORKER_HEALTH_PORT: ${WORKER_HEALTH_PORT:-3001}
     depends_on:
       migrate: { condition: service_completed_successfully }
