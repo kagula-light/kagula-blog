@@ -16,6 +16,13 @@ async function login(page: Page, identity: (typeof e2eIdentities)[keyof typeof e
   await page.getByLabel("用户名").fill(identity.username);
   await page.getByLabel("密码").fill(identity.password);
   await page.getByRole("button", { name: "登录" }).click();
+  if (identity.status === "BANNED") {
+    await expect(page).toHaveURL(/\/login(?:\?|$)/);
+  } else if (identity.role === "ADMIN") {
+    await expect(page).toHaveURL(/\/admin$/);
+  } else {
+    await expect(page).toHaveURL("http://127.0.0.1:3000/");
+  }
 }
 
 async function closeContext(context: BrowserContext): Promise<void> {
@@ -51,7 +58,9 @@ test("persists reader likes and favorites across article and account pages", asy
 
   await page.goto("/account");
   await expect(page.getByRole("heading", { name: e2eIdentities.user.displayName })).toBeVisible();
-  await expect(page.getByRole("link", { name: "E2E 公开文章" })).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "收藏文章" }).getByRole("link", { name: "E2E 公开文章" }),
+  ).toBeVisible();
 });
 
 test("approves a pending comment, enforces mute, and revokes a banned session", async ({
