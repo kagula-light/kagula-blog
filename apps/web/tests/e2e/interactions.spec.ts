@@ -115,8 +115,17 @@ test("approves a pending comment, enforces mute, and revokes a banned session", 
     });
 
     await page.goto("/account");
-    await expect(page).toHaveURL(/\/login\?next=%2Faccount$/);
+    await expect(page).toHaveURL(/\/login\?next=(?:%2F|\/)account$/);
   } finally {
+    await adminPage.goto(`/admin/users?q=${e2eIdentities.governed.username}`);
+    const cleanupRow = adminPage.getByRole("row", {
+      name: new RegExp(e2eIdentities.governed.username),
+    });
+    const restoreButton = cleanupRow.getByRole("button", { name: /^(恢复|解封)$/ });
+    if ((await restoreButton.count()) > 0) {
+      await restoreButton.click();
+      await expect(adminPage.getByText("用户状态已更新", { exact: true })).toBeVisible();
+    }
     await closeContext(adminContext);
   }
 });
