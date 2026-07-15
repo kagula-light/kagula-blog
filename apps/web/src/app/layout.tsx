@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { site } from "../data/site";
+import { MascotShell } from "../features/mascot/components/mascot-shell";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,7 +17,10 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="zh-CN">
-      <body>{children}</body>
+      <body>
+        {children}
+        <MascotShell />
+      </body>
     </html>
   );
 }
