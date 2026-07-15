@@ -8,6 +8,7 @@ ENV_FILE="${APP_DIR}/.env"
 BACKUP_DIR="${APP_DIR}/backups"
 
 mkdir -p "$BACKUP_DIR"
+umask 077
 cd "$APP_DIR"
 
 backup_name="${BACKUP_DIR}/manual-$(date -u +%Y%m%dT%H%M%SZ).sql.gz"

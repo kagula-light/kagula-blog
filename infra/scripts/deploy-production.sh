@@ -20,6 +20,7 @@ if [ ! -f "$COMPOSE_FILE" ] || [ ! -f "$ENV_FILE" ]; then
 fi
 
 mkdir -p "$STATE_DIR" "$BACKUP_DIR"
+umask 077
 cd "$APP_DIR"
 
 PREVIOUS_RELEASE=""
