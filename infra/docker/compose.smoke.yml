@@ -71,6 +71,7 @@ services:
     environment:
       <<: *runtime-env
       WORKER_HEALTH_PORT: 3001
+      HOTSPOT_COLLECTION_ENABLED: "false"
     depends_on:
       migrate: { condition: service_completed_successfully }
     networks: [smoke]

@@ -6,11 +6,14 @@ import pino from "pino";
 import { parseWorkerEnv } from "./config/env";
 import { checkReadiness } from "./health/check-readiness";
 import { createHealthServer } from "./health/create-health-server";
-import { createRedisAdapter } from "./redis/create-redis-adapter";
+import { collectHotspots } from "./hotspots/collect-hotspots";
+import { createHotspotCollectionRepository } from "./hotspots/hotspot-repository";
+import { startHotspotCollectionSchedule } from "./jobs/collect-hotspots-schedule";
 import {
   createScheduledPostPublisher,
   publishScheduledPosts,
 } from "./jobs/publish-scheduled-posts";
+import { createRedisAdapter } from "./redis/create-redis-adapter";
 
 async function startWorker(): Promise<void> {
   const env = parseWorkerEnv();
@@ -21,6 +24,7 @@ async function startWorker(): Promise<void> {
   const database = createDatabaseClient(env.DATABASE_URL);
   const redis = createRedisAdapter({ redisUrl: env.REDIS_URL });
   const scheduledPublisher = createScheduledPostPublisher(database);
+  const hotspotRepository = createHotspotCollectionRepository(database);
 
   const healthServer = createHealthServer({
     port: env.WORKER_HEALTH_PORT,
@@ -51,9 +55,23 @@ async function startWorker(): Promise<void> {
       });
   }, 60_000);
   scheduledPublishTimer.unref();
+  healthServer.listen();
+  const hotspotSchedule = startHotspotCollectionSchedule({
+    enabled: env.HOTSPOT_COLLECTION_ENABLED,
+    collect: async () => {
+      const summary = await collectHotspots({ repository: hotspotRepository });
+      logger.info(summary, "hotspot collection completed");
+    },
+    onFailure: () => {
+      logger.warn("hotspot collection failed before source isolation");
+    },
+  });
+  logger.info({ port: env.WORKER_HEALTH_PORT }, "worker health server started");
+
   const shutdown = (): Promise<void> => {
     shutdownPromise ??= (async () => {
       clearInterval(scheduledPublishTimer);
+      hotspotSchedule.stop();
       await healthServer.close();
       await redis.close();
       await database.close();
@@ -69,9 +87,6 @@ async function startWorker(): Promise<void> {
   };
   process.once("SIGTERM", handleSignal);
   process.once("SIGINT", handleSignal);
-
-  healthServer.listen();
-  logger.info({ port: env.WORKER_HEALTH_PORT }, "worker health server started");
 }
 
 startWorker().catch(() => {

@@ -84,16 +84,11 @@ Web 运行凭据不应具有读取数据库备份的权限。
 
 | 变量 | 作用 | 敏感 |
 | --- | --- | --- |
-| `HOTSPOT_CRON` | 默认每 30 分钟调度 | 否 |
-| `HOTSPOT_ARCHIVE_CRON` | 北京时间每日归档 | 否 |
-| `HOTSPOT_HTTP_TIMEOUT_MS` | 单来源超时 | 否 |
-| `HOTSPOT_MAX_RESPONSE_BYTES` | 最大响应体 | 否 |
-| `HOTSPOT_CONCURRENCY` | 来源并发上限 | 否 |
-| `GITHUB_TOKEN` | 提升 GitHub API 限额，可选 | 是 |
+| `HOTSPOT_COLLECTION_ENABLED` | 是否运行热点采集；生产默认 `true`，其他环境默认 `false` | 否 |
 | `WORKER_HEALTH_PORT` | Worker 健康 HTTP 端口，当前本地默认 `3001` | 否 |
 | `MIGRATIONS_DIR` | Worker 迁移命令读取的迁移目录 | 否 |
 
-各来源启用状态存入数据库并由管理员控制，不需要为每次暂停修改环境。
+当前采集周期固定为 30 分钟，响应上限固定为 2 MiB；每个来源的启用状态、请求主机和超时存入 PostgreSQL。CI 与容器冒烟环境显式设置 `HOTSPOT_COLLECTION_ENABLED=false`，不得访问第三方来源。
 
 ## GitHub Actions
 
