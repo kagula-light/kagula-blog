@@ -13,7 +13,11 @@ export const dynamic = "force-dynamic";
 
 export default async function HotspotsPage() {
   const now = new Date();
-  const items = await createHotspotRepository(getDatabase()).listCurrentPublic(now);
+  const repository = createHotspotRepository(getDatabase());
+  const [items, archives] = await Promise.all([
+    repository.listCurrentPublic(now),
+    repository.listRecentArchives(14),
+  ]);
 
   return (
     <>
@@ -35,6 +39,24 @@ export default async function HotspotsPage() {
           <p>从五个公开来源带回线索，只展示经过人工审核且仍在有效期内的条目。</p>
         </header>
         <HotspotList items={items} />
+        {archives.length > 0 ? (
+          <nav className="hotspot-archive-nav" aria-labelledby="hotspot-archive-title">
+            <div>
+              <p>历史快照</p>
+              <h2 id="hotspot-archive-title">往日归档</h2>
+            </div>
+            <ol>
+              {archives.map((archive) => (
+                <li key={archive.archiveDate}>
+                  <Link href={`/hotspots/archive/${archive.archiveDate}`}>
+                    <time dateTime={archive.archiveDate}>{archive.archiveDate}</time>
+                    <span>{archive.itemCount} 条</span>
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        ) : null}
       </main>
       <SiteFooter year={new Date().getUTCFullYear()} />
     </>

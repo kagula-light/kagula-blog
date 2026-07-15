@@ -1980,6 +1980,76 @@ button {
   font-size: 1rem;
 }
 
+.hotspot-archive-nav {
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 1fr);
+  gap: 2rem;
+  padding-block: clamp(3.5rem, 7vw, 6rem);
+  border-top: 1px solid #303034;
+}
+
+.hotspot-archive-nav p,
+.hotspot-archive-nav h2 {
+  margin: 0;
+}
+
+.hotspot-archive-nav p {
+  margin-bottom: 0.5rem;
+  color: var(--rune);
+  font-size: 0.6875rem;
+  font-weight: 750;
+}
+
+.hotspot-archive-nav h2 {
+  font-family: "STZhongsong", "Songti SC", serif;
+  font-size: 1.375rem;
+  letter-spacing: 0;
+}
+
+.hotspot-archive-nav ol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid #303034;
+  list-style: none;
+}
+
+.hotspot-archive-nav li:nth-child(odd) {
+  padding-right: 1.5rem;
+}
+
+.hotspot-archive-nav li:nth-child(even) {
+  padding-left: 1.5rem;
+  border-left: 1px solid #303034;
+}
+
+.hotspot-archive-nav a {
+  display: flex;
+  min-height: 3.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid #303034;
+  color: var(--ink);
+  font-size: 0.8125rem;
+  text-decoration: none;
+}
+
+.hotspot-archive-nav a:hover,
+.hotspot-archive-nav a:focus-visible {
+  color: var(--star);
+}
+
+.hotspot-archive-nav span {
+  color: #85848c;
+  font-size: 0.6875rem;
+}
+
+.hotspot-archive-header {
+  padding-bottom: 3rem;
+}
+
 .site-footer {
   display: grid;
   width: min(100% - 2.5rem, 78rem);
@@ -2186,6 +2256,21 @@ button {
 
   .hotspot-external-mark {
     display: none;
+  }
+
+  .hotspot-archive-nav,
+  .hotspot-archive-nav ol {
+    grid-template-columns: 1fr;
+  }
+
+  .hotspot-archive-nav {
+    gap: 1.25rem;
+  }
+
+  .hotspot-archive-nav li:nth-child(odd),
+  .hotspot-archive-nav li:nth-child(even) {
+    padding-inline: 0;
+    border-left: 0;
   }
 }
 

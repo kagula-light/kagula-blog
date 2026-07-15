@@ -7,6 +7,7 @@ import { hotspotCandidates, hotspotSources } from "@kagula/database/schema";
 import { and, eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import { createDailyHotspotArchiveRepository } from "../src/hotspots/archive-hotspots";
 import {
   createHotspotCollectionRepository,
   type HotspotSourceConfiguration,
@@ -203,5 +204,64 @@ describe("hotspot collection repository", () => {
     ).resolves.toEqual({ status: "LOCKED" });
     releaseCollection?.();
     await expect(firstRun).resolves.toEqual({ status: "SUCCEEDED", candidateCount: 0 });
+  });
+
+  it("creates one ordered archive and preserves its historical titles", async () => {
+    if (!primaryDatabase || !source) throw new Error("integration database was not initialized");
+    const archiveDay = 10 + (Number.parseInt(externalId.slice(-2), 16) % 18);
+    const archiveDate = `2099-12-${archiveDay.toString().padStart(2, "0")}`;
+    const rows = await primaryDatabase.client<{ id: string }[]>`
+      insert into hotspot_candidates (
+        source_id, external_id, original_title, display_title, original_url,
+        normalized_url, source_rank, source_score, dedupe_key, raw_fingerprint,
+        status, public_order, reviewed_at, expires_at, captured_at
+      ) values
+        (${source.id}, ${`archive-second-${externalId}`}, 'Second source', 'Second snapshot',
+          'https://github.com/example/archive-second', 'https://github.com/example/archive-second',
+          2, 20, ${`archive-second-${externalId}`.padEnd(64, "2").slice(0, 64)}, 'archive-second',
+          'APPROVED', 2, '2099-12-01T00:00:00Z', '2100-01-01T00:00:00Z', '2099-12-01T00:00:00Z'),
+        (${source.id}, ${`archive-first-${externalId}`}, 'First source', 'First snapshot',
+          'https://github.com/example/archive-first', 'https://github.com/example/archive-first',
+          1, 40, ${`archive-first-${externalId}`.padEnd(64, "1").slice(0, 64)}, 'archive-first',
+          'APPROVED', 1, '2099-12-01T00:00:00Z', '2100-01-01T00:00:00Z', '2099-12-01T00:00:00Z')
+      returning id
+    `;
+    const repository = createDailyHotspotArchiveRepository(primaryDatabase);
+    const archivedAt = new Date(Date.UTC(2099, 11, archiveDay, 16, 5));
+    await expect(repository.createArchive({ archiveDate, archivedAt })).resolves.toEqual({
+      status: "CREATED",
+      itemCount: 2,
+    });
+    await expect(repository.createArchive({ archiveDate, archivedAt })).resolves.toEqual({
+      status: "EXISTING",
+      itemCount: 2,
+    });
+
+    const archivedItems = await primaryDatabase.client<
+      { position: number; title: string; source_rank: number }[]
+    >`
+      select item.position, item.title, item.source_rank
+      from daily_hotspot_archive_items item
+      inner join daily_hotspot_archives archive on archive.id = item.archive_id
+      where archive.archive_date = ${archiveDate}
+      order by item.position
+    `;
+    expect(archivedItems).toEqual([
+      { position: 1, title: "First snapshot", source_rank: 1 },
+      { position: 2, title: "Second snapshot", source_rank: 2 },
+    ]);
+
+    await primaryDatabase.client`
+      update hotspot_candidates set display_title = 'Changed later'
+      where id in ${primaryDatabase.client(rows.map((row) => row.id))}
+    `;
+    const titles = await primaryDatabase.client<{ title: string }[]>`
+      select item.title
+      from daily_hotspot_archive_items item
+      inner join daily_hotspot_archives archive on archive.id = item.archive_id
+      where archive.archive_date = ${archiveDate}
+      order by item.position
+    `;
+    expect(titles).toEqual([{ title: "First snapshot" }, { title: "Second snapshot" }]);
   });
 });

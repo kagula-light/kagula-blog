@@ -88,7 +88,7 @@ Web 运行凭据不应具有读取数据库备份的权限。
 | `WORKER_HEALTH_PORT` | Worker 健康 HTTP 端口，当前本地默认 `3001` | 否 |
 | `MIGRATIONS_DIR` | Worker 迁移命令读取的迁移目录 | 否 |
 
-当前采集周期固定为 30 分钟，响应上限固定为 2 MiB；每个来源的启用状态、请求主机和超时存入 PostgreSQL。CI 与容器冒烟环境显式设置 `HOTSPOT_COLLECTION_ENABLED=false`，不得访问第三方来源。
+当前采集周期固定为 30 分钟，响应上限固定为 2 MiB；每个来源的启用状态、请求主机和超时存入 PostgreSQL。每日归档固定在北京时间 `00:05` 检查上一自然日，启动时也会补跑；归档不需要额外环境变量。CI 与容器冒烟环境显式设置 `HOTSPOT_COLLECTION_ENABLED=false`，不得访问第三方来源。
 
 ## GitHub Actions
 

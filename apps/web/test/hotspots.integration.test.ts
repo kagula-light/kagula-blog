@@ -187,4 +187,40 @@ describe("hotspot review repository", () => {
     const disabledItems = await repository.listCurrentPublic(now);
     expect(disabledItems.filter((item) => candidateIds.includes(item.id))).toEqual([]);
   });
+
+  it("reads recent archive metadata and ordered immutable snapshots", async () => {
+    const archiveDay = 10 + (Number.parseInt(suffix.slice(0, 2), 16) % 18);
+    const archiveDate = `2098-10-${archiveDay.toString().padStart(2, "0")}`;
+    const [archive] = await getDatabase().client<{ id: string }[]>`
+      insert into daily_hotspot_archives (archive_date, item_count)
+      values (${archiveDate}, 2)
+      returning id
+    `;
+    if (!archive) throw new Error("hotspot archive fixture was not created");
+    await getDatabase().client`
+      insert into daily_hotspot_archive_items (
+        archive_id, position, source_code, source_name, title, url, source_rank, captured_at
+      ) values
+        (${archive.id}, 2, 'HACKER_NEWS', 'Hacker News', 'Second archived item',
+          'https://news.ycombinator.com/item?id=2', 2, '2098-10-10T00:00:00Z'),
+        (${archive.id}, 1, 'GITHUB_TRENDING', 'GitHub Trending', 'First archived item',
+          'https://github.com/example/archive', 1, '2098-10-10T00:00:00Z')
+    `;
+
+    const repository = createHotspotRepository(getDatabase());
+    await expect(repository.listRecentArchives(100)).resolves.toContainEqual(
+      expect.objectContaining({ archiveDate, itemCount: 2 }),
+    );
+    await expect(repository.findArchive(archiveDate)).resolves.toEqual(
+      expect.objectContaining({
+        archiveDate,
+        itemCount: 2,
+        items: [
+          expect.objectContaining({ position: 1, title: "First archived item" }),
+          expect.objectContaining({ position: 2, title: "Second archived item" }),
+        ],
+      }),
+    );
+    await expect(repository.findArchive("2098-01-01")).resolves.toBeNull();
+  });
 });

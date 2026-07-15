@@ -3,6 +3,8 @@ import type { PublicHotspotItem } from "../../features/hotspots/server/hotspot-r
 interface HotspotListProps {
   readonly items: readonly PublicHotspotItem[];
   readonly variant?: "full" | "preview";
+  readonly emptyTitle?: string;
+  readonly emptyDescription?: string;
 }
 
 function formatCapturedAt(value: Date): string {
@@ -16,12 +18,17 @@ function formatCapturedAt(value: Date): string {
   }).format(value);
 }
 
-export function HotspotList({ items, variant = "full" }: HotspotListProps) {
+export function HotspotList({
+  items,
+  variant = "full",
+  emptyTitle = "今天还没有公开热点",
+  emptyDescription = "候选仍在采集或审核中。",
+}: HotspotListProps) {
   if (items.length === 0) {
     return (
       <div className="public-empty-state hotspot-empty-state">
-        <strong>今天还没有公开热点</strong>
-        <p>候选仍在采集或审核中。</p>
+        <strong>{emptyTitle}</strong>
+        <p>{emptyDescription}</p>
       </div>
     );
   }

@@ -1,5 +1,12 @@
 import type { DatabaseClient } from "@kagula/database/client";
-import { auditLogs, hotspotCandidates, hotspotSources, users } from "@kagula/database/schema";
+import {
+  auditLogs,
+  dailyHotspotArchiveItems,
+  dailyHotspotArchives,
+  hotspotCandidates,
+  hotspotSources,
+  users,
+} from "@kagula/database/schema";
 import { and, asc, desc, eq, gt } from "drizzle-orm";
 
 import {
@@ -50,6 +57,27 @@ export interface PublicHotspotItem {
   readonly capturedAt: Date;
 }
 
+export interface RecentHotspotArchive {
+  readonly archiveDate: string;
+  readonly itemCount: number;
+  readonly createdAt: Date;
+}
+
+export interface HotspotArchiveItem {
+  readonly candidateId: string | null;
+  readonly position: number;
+  readonly sourceCode: string;
+  readonly sourceName: string;
+  readonly title: string;
+  readonly url: string;
+  readonly sourceRank: number;
+  readonly capturedAt: Date;
+}
+
+export interface HotspotArchive extends RecentHotspotArchive {
+  readonly items: readonly HotspotArchiveItem[];
+}
+
 export interface HotspotRepository {
   readonly listReviewCandidates: (
     filter?: HotspotReviewFilter,
@@ -58,6 +86,8 @@ export interface HotspotRepository {
     input: HotspotReviewMutation,
   ) => Promise<HotspotReviewRepositoryResult>;
   readonly listCurrentPublic: (now: Date) => Promise<readonly PublicHotspotItem[]>;
+  readonly listRecentArchives: (limit?: number) => Promise<readonly RecentHotspotArchive[]>;
+  readonly findArchive: (archiveDate: string) => Promise<HotspotArchive | null>;
 }
 
 const auditAction = {
@@ -235,6 +265,51 @@ export function createHotspotRepository(database: DatabaseClient): HotspotReposi
         }
         return { ...row, publicOrder: row.publicOrder };
       });
+    },
+
+    listRecentArchives: (limit) =>
+      database.db
+        .select({
+          archiveDate: dailyHotspotArchives.archiveDate,
+          itemCount: dailyHotspotArchives.itemCount,
+          createdAt: dailyHotspotArchives.createdAt,
+        })
+        .from(dailyHotspotArchives)
+        .orderBy(desc(dailyHotspotArchives.archiveDate))
+        .limit(clampLimit(limit)),
+
+    findArchive: async (archiveDate) => {
+      const [archive] = await database.db
+        .select({
+          id: dailyHotspotArchives.id,
+          archiveDate: dailyHotspotArchives.archiveDate,
+          itemCount: dailyHotspotArchives.itemCount,
+          createdAt: dailyHotspotArchives.createdAt,
+        })
+        .from(dailyHotspotArchives)
+        .where(eq(dailyHotspotArchives.archiveDate, archiveDate))
+        .limit(1);
+      if (!archive) return null;
+      const items = await database.db
+        .select({
+          candidateId: dailyHotspotArchiveItems.candidateId,
+          position: dailyHotspotArchiveItems.position,
+          sourceCode: dailyHotspotArchiveItems.sourceCode,
+          sourceName: dailyHotspotArchiveItems.sourceName,
+          title: dailyHotspotArchiveItems.title,
+          url: dailyHotspotArchiveItems.url,
+          sourceRank: dailyHotspotArchiveItems.sourceRank,
+          capturedAt: dailyHotspotArchiveItems.capturedAt,
+        })
+        .from(dailyHotspotArchiveItems)
+        .where(eq(dailyHotspotArchiveItems.archiveId, archive.id))
+        .orderBy(asc(dailyHotspotArchiveItems.position));
+      return {
+        archiveDate: archive.archiveDate,
+        itemCount: archive.itemCount,
+        createdAt: archive.createdAt,
+        items,
+      };
     },
   };
 }

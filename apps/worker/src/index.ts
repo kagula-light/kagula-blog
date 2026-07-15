@@ -6,8 +6,10 @@ import pino from "pino";
 import { parseWorkerEnv } from "./config/env";
 import { checkReadiness } from "./health/check-readiness";
 import { createHealthServer } from "./health/create-health-server";
+import { archiveHotspots, createDailyHotspotArchiveRepository } from "./hotspots/archive-hotspots";
 import { collectHotspots } from "./hotspots/collect-hotspots";
 import { createHotspotCollectionRepository } from "./hotspots/hotspot-repository";
+import { startDailyHotspotArchiveSchedule } from "./jobs/archive-hotspots-schedule";
 import { startHotspotCollectionSchedule } from "./jobs/collect-hotspots-schedule";
 import {
   createScheduledPostPublisher,
@@ -25,6 +27,7 @@ async function startWorker(): Promise<void> {
   const redis = createRedisAdapter({ redisUrl: env.REDIS_URL });
   const scheduledPublisher = createScheduledPostPublisher(database);
   const hotspotRepository = createHotspotCollectionRepository(database);
+  const hotspotArchiveRepository = createDailyHotspotArchiveRepository(database);
 
   const healthServer = createHealthServer({
     port: env.WORKER_HEALTH_PORT,
@@ -66,12 +69,22 @@ async function startWorker(): Promise<void> {
       logger.warn("hotspot collection failed before source isolation");
     },
   });
+  const hotspotArchiveSchedule = startDailyHotspotArchiveSchedule({
+    archive: async () => {
+      const result = await archiveHotspots(hotspotArchiveRepository);
+      logger.info(result, "daily hotspot archive checked");
+    },
+    onFailure: () => {
+      logger.warn("daily hotspot archive failed");
+    },
+  });
   logger.info({ port: env.WORKER_HEALTH_PORT }, "worker health server started");
 
   const shutdown = (): Promise<void> => {
     shutdownPromise ??= (async () => {
       clearInterval(scheduledPublishTimer);
       hotspotSchedule.stop();
+      hotspotArchiveSchedule.stop();
       await healthServer.close();
       await redis.close();
       await database.close();
