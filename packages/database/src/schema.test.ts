@@ -8,6 +8,11 @@ import {
   commentStatus,
   credentials,
   favorites,
+  dailyHotspotArchiveItems,
+  dailyHotspotArchives,
+  hotspotCandidates,
+  hotspotCandidateStatus,
+  hotspotSources,
   mediaAssets,
   mediaAssetStatus,
   posts,
@@ -113,6 +118,94 @@ describe("interaction schema", () => {
     );
     expect(Object.keys(getTableColumns(postLikes))).toEqual(["postId", "userId", "createdAt"]);
     expect(Object.keys(getTableColumns(favorites))).toEqual(["postId", "userId", "createdAt"]);
+  });
+});
+
+describe("hotspot schema", () => {
+  it("defines stable candidate review states", () => {
+    expect(hotspotCandidateStatus.enumValues).toEqual([
+      "PENDING",
+      "APPROVED",
+      "REJECTED",
+      "EXPIRED",
+    ]);
+  });
+
+  it.each([
+    [hotspotSources, "hotspot_sources"],
+    [hotspotCandidates, "hotspot_candidates"],
+    [dailyHotspotArchives, "daily_hotspot_archives"],
+    [dailyHotspotArchiveItems, "daily_hotspot_archive_items"],
+  ] as const)("maps a hotspot table to %s", (table, expectedName) => {
+    expect(getTableName(table)).toBe(expectedName);
+  });
+
+  it("contains source health and collection policy columns", () => {
+    expect(Object.keys(getTableColumns(hotspotSources))).toEqual(
+      expect.arrayContaining([
+        "id",
+        "code",
+        "name",
+        "enabled",
+        "allowedHost",
+        "collectionIntervalMinutes",
+        "timeoutMs",
+        "lastAttemptAt",
+        "lastSuccessAt",
+        "lastFailureAt",
+        "lastError",
+        "consecutiveFailures",
+        "createdAt",
+        "updatedAt",
+      ]),
+    );
+  });
+
+  it("contains candidate review, ordering and dedupe columns", () => {
+    expect(Object.keys(getTableColumns(hotspotCandidates))).toEqual(
+      expect.arrayContaining([
+        "id",
+        "sourceId",
+        "externalId",
+        "originalTitle",
+        "displayTitle",
+        "originalUrl",
+        "normalizedUrl",
+        "sourceRank",
+        "sourceScore",
+        "sourceCategory",
+        "dedupeKey",
+        "rawFingerprint",
+        "status",
+        "publicOrder",
+        "capturedAt",
+        "reviewedByUserId",
+        "reviewedAt",
+        "expiresAt",
+        "createdAt",
+        "updatedAt",
+      ]),
+    );
+  });
+
+  it("contains immutable archive snapshot columns", () => {
+    expect(Object.keys(getTableColumns(dailyHotspotArchives))).toEqual([
+      "id",
+      "archiveDate",
+      "itemCount",
+      "createdAt",
+    ]);
+    expect(Object.keys(getTableColumns(dailyHotspotArchiveItems))).toEqual([
+      "archiveId",
+      "position",
+      "candidateId",
+      "sourceCode",
+      "sourceName",
+      "title",
+      "url",
+      "sourceRank",
+      "capturedAt",
+    ]);
   });
 });
 
